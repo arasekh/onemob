@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/signUpPageRelativeLayout"
+    android:background="@mipmap/sign_up_page">
+
+    <TextView
+        android:id="@+id/lblSignUpPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="251dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/sign_up_page_text"
+        android:textColor="#000000"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblSignUpPage"
+        android:text="@string/name_text_sign_up"
+        android:id="@+id/lblName"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="260dp"
+        android:layout_marginRight="10dp" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblName"
+        android:id="@+id/txtName"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginTop="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtName"
+        android:text="@string/email_text_sign_up"
+        android:textSize="20sp"
+        android:id="@+id/lblEmailAddress"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="360dp"
+        android:layout_marginRight="10dp"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblEmailAddress"
+        android:layout_marginTop="10dp"
+        android:id="@+id/txtEmailAddress"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="110dp"
+        android:inputType="textEmailAddress"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtEmailAddress"
+        android:text="@string/password_text_sign_up"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="337dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/lblPassword"/>
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:layout_below="@+id/lblPassword"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="110dp"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtPassword"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="110dp"
+        android:background="#A6C51162"
+        android:id="@+id/btnSignUp"
+        android:text="@string/sign_up_button_text"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/if_have_account_text"
+        android:layout_below="@id/btnSignUp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="#000000"
+        android:id="@+id/lblHaveAnAccount"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="127dp"/>
+
+</RelativeLayout>
