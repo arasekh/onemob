@@ -15,7 +15,7 @@ class Student(models.Model):
             str:
                 A random 64 character string.
         """
-        return get_random_string(length=64)
+        return get_random_string(length=6, allowed_chars='0123456789')
 
     username = models.CharField(
         _('username'),
@@ -37,32 +37,6 @@ class Student(models.Model):
         max_length=255,
         verbose_name="confirmation key",
     )
-    # Stores the raw password if set_password() is called so that it can
-    # be passed to password_changed() after the model is saved.
-    _password = None
-
-
-
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        self._password = raw_password
-
-    def check_password(self, raw_password):
-        """
-        Return a boolean of whether the raw_password was correct. Handles
-        hashing formats behind the scenes.
-        """
-        def setter(raw_password):
-            self.set_password(raw_password)
-            # Password hash upgrades shouldn't be considered password changes.
-            self._password = None
-            self.save(update_fields=["password"])
-        return check_password(raw_password, self.password, setter)
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """Send an email to this user."""
-        send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def normalize_email(self, email):
         """
@@ -76,10 +50,6 @@ class Student(models.Model):
         else:
             email = email_name + '@' + domain_part.lower()
         return email
-
-    def clean(self):
-        super().clean()
-        self.email = self.normalize_email(self.email)
 
     def send_verification_email(self, email):
         context = {
@@ -95,7 +65,6 @@ class Student(models.Model):
 
     def save(self, *args, **kwargs):
         self.last_login = timezone.now()
-        self.set_password(self.password)
         self.email = self.normalize_email(self.email)
         self.send_verification_email(self.email)
         super(Student, self).save(*args, **kwargs)

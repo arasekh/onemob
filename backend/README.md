@@ -19,6 +19,7 @@ installation
 
 api urls:
 - http://localhost:8000/api/
+- http://localhost:8000/api/get/<username>
 - http://localhost:8000/api/create
 
 Create url: open teminal and type this url. Note that httpie must be installed.

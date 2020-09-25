@@ -11,7 +11,7 @@ class StudentListApiView(generics.ListAPIView):
 class StudentDetailApiView(generics.RetrieveAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentDetailSerializer
-    lookup_field = 'id'
+    lookup_field = 'username'
 
 class StudentCreateApiView(generics.CreateAPIView):
     queryset = Student.objects.all()
