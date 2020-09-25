@@ -1,12 +1,22 @@
 from rest_framework.serializers import ModelSerializer
 from virtualclass.models import Student
 
-class PostListSerializer(ModelSerializer):
+class StudentListSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
 
-class PostDetailSerializer(ModelSerializer):
+class StudentDetailSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+class StudentCreateSerializer(ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+class EmailVerificationSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'

@@ -1,0 +1,10 @@
+{% load hosts %}
+Hello,
+
+Please click the link below to verify your email address.
+
+<div style='text-align:center'>
+  <a href="{% host_url 'virtualclass:verify-email' token=verification_token scheme 'http' %}">
+    Confirm Your Email
+  </a>
+</div>

@@ -26,7 +26,7 @@ SECRET_KEY = 'hj!y00*#(9l_67cg$&-%bre620##xqtb3)+s=l)%%whqf4zd=x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'virtualclass',
+    'django_hosts',
 ]
 
 MIDDLEWARE = [
+    'django_hosts.middleware.HostsRequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'androidserver.urls'
@@ -131,15 +134,19 @@ REST_FRAMEWORK = {
     ]
 }
 
+ROOT_HOSTCONF = 'androidserver.hosts'
+DEFAULT_HOST = 'index'
+PARENT_HOST = 'localhost:8000'
 
-if not DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST_USER = EMAIL_HOST_USER
-    EMAIL_HOST = EMAIL_HOST
-    EMAIL_PORT = EMAIL_PORT
-    EMAIL_USE_TLS = EMAIL_USE_TLS
-    EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
-else:
-    EMAIL_BACKEND = (
-        'django.core.mail.backends.console.EmailBackend'
-    )
+
+#if not DEBUG:
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST_USER = EMAIL_HOST_USER
+EMAIL_HOST = EMAIL_HOST
+EMAIL_PORT = EMAIL_PORT
+EMAIL_USE_TLS = EMAIL_USE_TLS
+EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+#else:
+#    EMAIL_BACKEND = (
+#        'django.core.mail.backends.console.EmailBackend'
+#    )

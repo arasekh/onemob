@@ -39,7 +39,7 @@ router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('', include(router.urls), name='home'),
 
     #auth
     path('signin/', views.signinuser, name='signinuser'),

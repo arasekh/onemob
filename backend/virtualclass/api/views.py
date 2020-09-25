@@ -1,18 +1,24 @@
 from rest_framework import generics
 from virtualclass.models import Student
-from .serializers import PostListSerializer, PostDetailSerializer
+from .serializers import StudentListSerializer, StudentDetailSerializer, StudentCreateSerializer, EmailVerificationSerializer
 from rest_framework.permissions import IsAdminUser
+from django.shortcuts import get_object_or_404
 
-class PostListApiView(generics.ListAPIView):
+class StudentListApiView(generics.ListAPIView):
     queryset = Student.objects.all()
-    serializer_class = PostListSerializer
+    serializer_class = StudentListSerializer
 
-class PostDetailApiView(generics.RetrieveAPIView):
+class StudentDetailApiView(generics.RetrieveAPIView):
     queryset = Student.objects.all()
-    serializer_class = PostListSerializer
+    serializer_class = StudentDetailSerializer
     lookup_field = 'id'
 
-class PostCreateApiView(generics.CreateAPIView):
+class StudentCreateApiView(generics.CreateAPIView):
     queryset = Student.objects.all()
-    serializer_class = PostListSerializer
+    serializer_class = StudentCreateSerializer
     permission_classes = [IsAdminUser]
+
+class EmailVerification(generics.RetrieveAPIView):
+    queryset = Student.objects.all()
+    serializer_class = EmailVerificationSerializer
+    lookup_field = 'key'
