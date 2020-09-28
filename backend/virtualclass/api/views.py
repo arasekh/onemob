@@ -80,15 +80,22 @@ class LoginApiView(APIView):
             token.created = datetime.datetime.utcnow()
             token.save()
         return Response({
-            'username': student.username,
             'email': student.email,
             'token': token.key,
         })
 
-class EmailVerification(generics.RetrieveAPIView):
-    queryset = Student.objects.all()
-    serializer_class = EmailVerificationSerializer
-    lookup_field = 'verification_key'
+class EmailVerification(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        student = request.auth.user.student
+        if request.data['verification_key'] != student.verification_key:
+            raise ValidationError({'detail': 'verification_key provided is incorrect'})
+        return Response({
+            'response': 'successfully verified the email',
+            'username': student.username,
+            'email': student.email,
+        })
 
 class StudentLoginView(APIView):
     queryset = Student.objects.all()
