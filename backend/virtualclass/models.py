@@ -6,8 +6,13 @@ from django.utils import timezone
 from email_utils import send_email
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
+from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
 
-class Student(models.Model):
+class Student(User):
     def generate_token():
         """
         Get a random 64 character string.
@@ -17,26 +22,18 @@ class Student(models.Model):
         """
         return get_random_string(length=6, allowed_chars='0123456789')
 
-    username = models.CharField(
-        _('username'),
-        max_length=150,
-        unique=True,
-        error_messages={
-            'unique': _("A user with that username already exists."),
-        },
-    )
-    first_name = models.CharField(_('first name'), max_length=150, blank=True)
-    last_name = models.CharField(_('last name'), max_length=150, blank=True)
-    email = models.EmailField()
-    password = models.CharField(_('password'), max_length=128)
-    last_login = models.DateTimeField(_('last login'), blank=True, null=True)
-    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    key = models.CharField(
+    verification_key = models.CharField(
         default=generate_token,
         editable=False,
         max_length=255,
         verbose_name="confirmation key",
     )
+
+    class Meta:
+        verbose_name_plural = _("Student")
+        verbose_name_plural = _("Students")
+    def __str__(self):
+        return self.username
 
     def normalize_email(self, email):
         """
@@ -53,7 +50,8 @@ class Student(models.Model):
 
     def send_verification_email(self, email):
         context = {
-            "verification_token": self.key
+            "username": self.username,
+            "verification_token": self.verification_key
         }
         send_email(
             context=context,
@@ -68,3 +66,8 @@ class Student(models.Model):
         self.email = self.normalize_email(self.email)
         self.send_verification_email(self.email)
         super(Student, self).save(*args, **kwargs)
+
+# @receiver(post_save, sender='virtualclass.Student')
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)

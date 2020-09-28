@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'virtualclass',
     'django_hosts',
+    'rest_framework.authtoken',
 ]
+# AUTH_USER_MODEL = 'virtualclass.Student'
 
 MIDDLEWARE = [
     'django_hosts.middleware.HostsRequestMiddleware',
@@ -131,13 +133,17 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'virtualclass.authentication.ExpiringTokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+    ],
 }
-
+REST_FRAMEWORK_TOKEN_EXPIRE_HOURS = 1
 ROOT_HOSTCONF = 'androidserver.hosts'
 DEFAULT_HOST = 'index'
 PARENT_HOST = 'localhost:8000'
-
 
 #if not DEBUG:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

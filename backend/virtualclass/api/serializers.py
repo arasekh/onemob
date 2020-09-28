@@ -11,10 +11,13 @@ class StudentDetailSerializer(ModelSerializer):
         model = Student
         fields = '__all__'
 
-class StudentCreateSerializer(ModelSerializer):
+class RegisterationSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = '__all__'
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
 class EmailVerificationSerializer(ModelSerializer):
     class Meta:
