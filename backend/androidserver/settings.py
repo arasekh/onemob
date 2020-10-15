@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'virtualclass',
     'django_hosts',
     'rest_framework.authtoken',
+    'corsheaders',
 ]
 # AUTH_USER_MODEL = 'virtualclass.Student'
 
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_hosts.middleware.HostsResponseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'androidserver.urls'
@@ -126,6 +129,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = str(BASE_DIR) + '/media/'
+
+DEFF_SALT = 'salt'
+DEFF_PASSWORD = 'pass'
+DEFF_FETCH_URL_NAME = 'api:video_fetch_url'
+
+#django cors-headers
+CORS_ORIGIN_ALLOW_ALL = True
 
 # api rest_framework settings
 REST_FRAMEWORK = {
