@@ -14,7 +14,7 @@
     <string name="video_name">نام فیلم</string>
     <string name="creature_name">نام سازنده</string>
     <string name="video_length">مدت زمان فیلم</string>
-    <string name="sign_up_text">ثبت نام</string>
+    <string name="sign_up_text">"ثبت نام                                                                                                 "</string>
     <string name="name_text_sign_up">نام و نام خانوادگی</string>
     <string name="sign_up_page_text">صفحه ثبت نام</string>
     <string name="email_text_sign_up">ایمیل</string>
@@ -24,4 +24,10 @@
     <string name="signUp_page_login_text">ورود</string>
     <string name="login_page_register">آیا حساب کاربری دارید؟ ثبت نام</string>
     <string name="exam_name_text">نام آزمون</string>
+    <string name="username_login_text">نام کاربری</string>
+    <string name="firstName_registration_text">نام</string>
+    <string name="lastName_registration_text">نام خانوادگي</string>
+    <string name="userName_registration_text">نام كاربري</string>
+    <string name="password_registration_text">رمز عبور</string>
+    <string name="confirmPassword_registration_text">تائید رمز عبور</string>
 </resources>

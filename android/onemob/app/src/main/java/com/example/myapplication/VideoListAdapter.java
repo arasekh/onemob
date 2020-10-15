@@ -33,8 +33,10 @@ public class VideoListAdapter extends ArrayAdapter<Video> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        String link = getItem(position).getVideoLink();
+//        String link = getItem(position).getVideoLink();
         String name = getItem(position).getVideoName();
+        String link = "link";
+//        String name = "name";
 
         Video video = new Video(link, name);
 

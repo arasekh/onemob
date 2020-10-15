@@ -1,122 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/signUpPageRelativeLayout"
-    android:background="@drawable/register">
+    android:background="@drawable/register_ali_asgary_last">
 
-    <TextView
-        android:id="@+id/lblSignUpPage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="251dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/sign_up_page_text"
-        android:textColor="#000000"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lblSignUpPage"
-        android:text="@string/name_text_sign_up"
-        android:id="@+id/lblName"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_marginTop="70dp"
-        android:layout_marginLeft="260dp"
-        android:layout_marginRight="10dp" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lblName"
-        android:id="@+id/txtName"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="183dp"
-        android:layout_marginTop="10dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtName"
-        android:text="@string/email_text_sign_up"
-        android:textSize="20sp"
-        android:id="@+id/lblEmailAddress"
-        android:textStyle="bold"
-        android:textColor="#000000"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="360dp"
-        android:layout_marginRight="10dp"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lblEmailAddress"
-        android:layout_marginTop="10dp"
-        android:id="@+id/txtEmailAddress"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="183dp"
-        android:inputType="textEmailAddress"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtEmailAddress"
-        android:text="@string/password_text_sign_up"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="#000000"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="337dp"
-        android:layout_marginRight="10dp"
-        android:id="@+id/lblPassword"/>
 
     <EditText
-        android:id="@+id/txtPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextPassword"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
         android:inputType="textPassword"
-        android:layout_below="@+id/lblPassword"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="183dp"/>
+        android:textColor="#FFAB00"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.926"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.586" />
+
+    <EditText
+        android:id="@+id/editTextUserName"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.93"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.438" />
+
+    <TextView
+        android:id="@+id/lblRegistrationToLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/if_have_account_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.791" />
+
+    <EditText
+        android:id="@+id/editTextConfirmPassword"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:textColor="#FFAB00"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.586" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirmPassword_registration_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.285"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_registration_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.949"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.534" />
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        android:textColor="#FFAB00"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.438" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/email_text_sign_up"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.392"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.391" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/userName_registration_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.391" />
+
+    <EditText
+        android:id="@+id/editTextLastName"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#FFAB00"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.291" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lastName_registration_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.294"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.248" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/firstName_registration_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.959"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.248" />
+
+    <TextView
+        android:id="@+id/lblRegistrationPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_page_text"
+        android:textAlignment="center"
+        android:textColor="#FFAB00"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.08" />
+
+    <EditText
+        android:id="@+id/editTextFirstName"
+        android:layout_width="167dp"
+        android:layout_height="45dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textColor="#FFAB00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.934"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.291" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txtPassword"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="183dp"
-        android:background="#A6C51162"
-        android:id="@+id/btnSignUp"
+        android:id="@+id/btnRegistration"
+        android:layout_width="373dp"
+        android:layout_height="45dp"
+        android:background="#FFAB00"
         android:text="@string/sign_up_button_text"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textColor="#615454"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.717" />
 
     <TextView
+        android:id="@+id/lblRegistrationStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/signUp_text_login_first_line"
-        android:layout_below="@id/btnSignUp"
-        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:textColor="#D50000"
+        android:textSize="18sp"
         android:textStyle="bold"
-        android:textSize="20dp"
-        android:textColor="#000000"
-        android:id="@+id/lblHaveAnAccount"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="200dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/lblLoginInRegisterPage"
-        android:text="@string/signUp_page_login_text"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="#C51162"
-        android:layout_below="@+id/lblHaveAnAccount"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="270dp"
-        android:layout_marginTop="10dp"/>
-
-</RelativeLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.858" />
+</androidx.constraintlayout.widget.ConstraintLayout>

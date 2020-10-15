@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.JsonPackage;
 
 //This class contains json fields which consist on the server.
 public class JsonFields {

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.JsonPackage;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -6,15 +6,12 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import okhttp3.OkHttpClient;
-import okhttp3.OkHttpClient.Builder;
 import okhttp3.Request;
 import okhttp3.Response;
 
 //This class is create new thread to run the server section and read the json from server.
-public class JSONTest extends AsyncTask {
+public class JsonGet extends AsyncTask {
     JsonFields jsonFields;
     @Override
     protected Object doInBackground(Object[] objects) {

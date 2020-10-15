@@ -14,126 +14,84 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.myapplication.JsonPackage.JsonPostLogin;
+import com.example.myapplication.ui.notifications.NotificationsFragment;
+
 public class LoginActivity extends AppCompatActivity {
-//    EditText fullName;
-    EditText emailEditText;
-    EditText passwordEditText;
-    Button login;
-    TextView lnkRegister;
+
+    EditText editTextUserName;
+    EditText editTextPassword;
+    Button btnLogin;
+    TextView lblLoginToRegister;
+    TextView lblLoginStatus;
+
+    JsonPostLogin jsonPostLogin = null;
+
+    String userName = "";
+    String password = "";
+    String token = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
-
-        setupUI();
-        setupListeners();
+        try {
+            setupUI();
+            setupListeners();
+        } catch (Exception e){
+            e.printStackTrace();
+            Log.e("Whole Exception!", e.getMessage());
+        }
     }
 
-    private void setupListeners() {
-        login.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                boolean isValid = checkValid();
+    private void setupUI(){
+        editTextUserName = findViewById(R.id.editTextUserNameLogin);
+        editTextPassword = findViewById(R.id.editTextPasswordLogin);
+        btnLogin = findViewById(R.id.btnLogin);
+        lblLoginToRegister = findViewById(R.id.lblLoginToRegistration);
+        lblLoginStatus = findViewById(R.id.lblLoginStatus);
+    }
 
-                if (isValid) {
-                    String emailValue = emailEditText.getText().toString();
-                    String passwordValue = passwordEditText.getText().toString();
-                    login(emailValue, passwordValue);
+    private void setupListeners(){
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkUserPassEmpty() == 2){
+                    checkUserPassTruth();
                 }
             }
         });
 
-        lnkRegister.setOnClickListener(new View.OnClickListener(){
+        lblLoginToRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-                startActivity(intent);
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                startActivity(loginIntent);
             }
         });
     }
 
-
-    private boolean login(String email, String password) {
-        // todo: login to server
-        try {
-            boolean successLogin = true;
-            if (successLogin) {
-                goToSecondActivity(email, password);
-            }
-        } catch (Exception ex) {
-            Log.d("", ex.getMessage());
-        }
-        return true;
-    }
-
-    private void goToSecondActivity(String email, String password) {
-        String baseUrl = "www.google.com";
-        Bundle bundle = new Bundle();
-        bundle.putString("email", email);
-        bundle.putString("password", password);
-
-//        Intent intent = new Intent(this, MainPageActivity.class);
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
-
-    private boolean checkValid() {
-        boolean validEmail = checkEmail();
-        boolean validPass= checkPassword();
-        boolean valid = false;
-
-        Log.d("", "yyyyyyyyyyyyyyyyyyyyyyy" + validEmail + validPass);
-        if (validEmail && validPass) {
-            valid = true;
-        }
-        return valid;
-    }
-
-    private boolean checkPassword() {
-        boolean isValid = true;
-
-        if (passwordEditText.getText().toString().matches("")) {
-            passwordEditText.setError("لطفا رمز عبور خود را وارد کنید");
-            isValid = false;
-        }
-//        else {
-//            if (!isValidPassword((CharSequence) passwordEditText)) {
-//                passwordEditText.setError("لطفا  رمز عبور معتبر وارد کنید!");
-//                isValid = false;
-//            }
-//        }
-        return isValid;
-    }
-
-    public static boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
-    }
-
-    private boolean checkEmail() {
-        boolean isValid = true;
-        if (emailEditText.getText().toString().matches("")) {
-            emailEditText.setError("لطفا ایمیل خود را وارد کنید");
-//            Toast.makeText(this, "You did not enter a username", Toast.LENGTH_SHORT).show();
-            isValid = false;
+    //This method checks username and password fields to being empty.
+    private int checkUserPassEmpty(){
+        userName = editTextUserName.getText().toString();
+        password = editTextPassword.getText().toString();
+        int checkEmpty = 0;
+        if (userName.equals("")){
+            editTextUserName.setError("لطفا نام کاربری خود را وارد کنید!");
         } else {
-            if (!isValidEmail(emailEditText.getText().toString())) {
-                emailEditText.setError("لطفا ایمیل معتبر وارد کنید!");
-                isValid = false;
-            }
+            checkEmpty++;
         }
-//        Log.d("", "hellloooooooooooooooooo");
-        return isValid;
+        if (password.equals("")){
+            editTextPassword.setError("لطفا رمز عبور خود را وارد کنید!");
+        } else {
+            checkEmpty++;
+        }
+        return checkEmpty;
     }
 
-    private void setupUI() {
-        emailEditText = findViewById(R.id.txtEmail);
-        passwordEditText = findViewById(R.id.txtPassword);
-        login = findViewById(R.id.btnLogin);
-        lnkRegister = (TextView) findViewById(R.id.lblSignUpPage);
-        lnkRegister.setMovementMethod(LinkMovementMethod.getInstance());
-
+    //This method checks username and password are truth or not.
+    private void checkUserPassTruth(){
+        jsonPostLogin = (JsonPostLogin) new JsonPostLogin(userName,password,LoginActivity.this,editTextUserName,editTextPassword,lblLoginStatus).execute();
     }
 
 }
