@@ -48,8 +48,8 @@ def convert_video_to_hls(arg):
     hls.output(str(path_root + '/hls.m3u8'))
 
 class Video(models.Model):
-    title = models.CharField(max_length=50)
-    video_file = EncryptedFileField(upload_to='videos/', blank=True)
+    title = models.CharField(max_length=50, unique=True)
+    video_file = EncryptedFileField(upload_to='videos/')
 
     @property
     def filename(self):

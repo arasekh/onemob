@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 import datetime
 from django.utils.timezone import utc
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, HttpResponseForbidden
 import os
 from django.contrib.auth.mixins import AccessMixin
 from django_encrypted_filefield.views import FetchView
@@ -22,6 +22,7 @@ from django.urls import reverse, NoReverseMatch
 from django_encrypted_filefield.constants import FETCH_URL_NAME
 from django_encrypted_filefield.crypt import Cryptographer
 from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
 import magic
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
@@ -124,22 +125,34 @@ class FetchVideoView(FetchView):
         return HttpResponse(
             content, content_type=magic.Magic(mime=True).from_buffer(content))
 
-class DownloadVideoApiView(APIView):
-    queryset = Video.objects.all()
+class DownloadVideoApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         title = kwargs.get("title")
         video = get_object_or_404(Video, title=title)
-        MEDIA_URL = settings.MEDIA_URL
-        if MEDIA_URL[0] == '/':
-            MEDIA_URL = MEDIA_URL[1:]
-        file_path = os.path.join(MEDIA_URL, video.video_file.name)
-        try:
-            return redirect(reverse(FETCH_URL_NAME, kwargs={"path": file_path}))
-        except NoReverseMatch:
-            return [Error(
-                "There is no url to handle fetching local files!"
-            )]
-        return Http404
+        student = request.auth.user.student
+        student_videos = student.videos.all()
+        if video in student_videos:
+            video_path = video.video_file.path
+            with open(video_path, "rb") as f:
+                content = f.read()
+            content = Cryptographer.decrypted(content)
+            return HttpResponse(
+                content, content_type=magic.Magic(mime=True).from_buffer(content))
+            # MEDIA_URL = settings.MEDIA_URL
+            # if MEDIA_URL[0] == '/':
+            #     MEDIA_URL = MEDIA_URL[1:]
+            # file_uri = os.path.join(MEDIA_URL, video.video_file.name)
+            # try:
+            #     return redirect(reverse(FETCH_URL_NAME, kwargs={"path": file_uri}))
+            # except NoReverseMatch:
+            #     return [Error(
+            #         "There is no url to handle fetching local files!"
+            #     )]
+            # return Http404
+        else:
+            raise PermissionDenied()
 
 class ListVideosApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
