@@ -14,3 +14,4 @@ django-polymorphic==3.0.0
 libmagic==1.0
 python-magic-bin==0.4.14
 ffmpeg-python==0.2.0
+python-ffmpeg-video-streaming==0.1.14
