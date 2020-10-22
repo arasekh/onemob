@@ -74,9 +74,11 @@ class RegisterationApiView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         student = serializer.save()
         student.send_verification_email()
+        token = create_token(student)
         return Response({
             'response': 'successfully registered a new user',
             'username': student.username,
+            'token': token.key,
             'email': student.email,
         })
 
