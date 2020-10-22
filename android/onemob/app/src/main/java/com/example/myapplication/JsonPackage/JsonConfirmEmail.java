@@ -1,14 +1,17 @@
 package com.example.myapplication.JsonPackage;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.myapplication.LoginActivity;
+import com.example.myapplication.MainActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.BufferedSink;
 
 //This class for confirming user email with a code which is sent to the user email.
 public class JsonConfirmEmail extends AsyncTask {
@@ -34,12 +38,14 @@ public class JsonConfirmEmail extends AsyncTask {
 
     EditText editTextConfirmEmailNotification;
     TextView lblConfirmStatus;
+    Context context;
 
-    public JsonConfirmEmail(String token, String confirmEmailCode, EditText editTextConfirmEmailNotification, TextView lblConfirmStatus) {
+    public JsonConfirmEmail(String token, String confirmEmailCode, EditText editTextConfirmEmailNotification, TextView lblConfirmStatus, Context context) {
         this.tokenConfirmEmail = token;
         this.confirmEmailCode = confirmEmailCode;
         this.editTextConfirmEmailNotification = editTextConfirmEmailNotification;
         this.lblConfirmStatus = lblConfirmStatus;
+        this.context = context;
     }
 
 
@@ -85,14 +91,20 @@ public class JsonConfirmEmail extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        Log.d("ConfirmEmailStatus", confirmEmailStatus);
-        if (confirmEmailStatus.equals("successfully verified the email")){
-            lblConfirmStatus.setTextColor(Color.parseColor("#000000"));
-            lblConfirmStatus.setText("تایید ایمیل موفقیت آمیز بود!");
-        } else {
-            lblConfirmStatus.setTextColor(Color.RED);
-            lblConfirmStatus.setText("تائید ایمیل ناموفق بود!");
-            editTextConfirmEmailNotification.setText("");
+        try {
+            Log.d("ConfirmEmailStatus", confirmEmailStatus);
+            if (confirmEmailStatus.equals("successfully verified the email")){
+                lblConfirmStatus.setTextColor(Color.parseColor("#000000"));
+                lblConfirmStatus.setText("تایید ایمیل موفقیت آمیز بود!");
+                Intent intentToMain = new Intent(context, MainActivity.class);
+                context.startActivity(intentToMain);
+            } else {
+                lblConfirmStatus.setTextColor(Color.RED);
+                lblConfirmStatus.setText("تائید ایمیل ناموفق بود!");
+                editTextConfirmEmailNotification.setText("");
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 }

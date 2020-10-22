@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.JsonPackage.JsonPostLogin;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
+import com.example.myapplication.ui.videos.VideosFragment;
 
 public class LoginActivity extends AppCompatActivity {
 

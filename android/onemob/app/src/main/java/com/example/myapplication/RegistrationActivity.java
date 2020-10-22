@@ -40,8 +40,12 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_activity);
-        setupUI();
-        setupListeners();
+        try {
+            setupUI();
+            setupListeners();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void setupUI(){
@@ -80,7 +84,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         checkPassword = 1;
                     }
                     if (checkPassword == 1){
-                        jsonPostRegistration = (JsonPostRegistration) new  JsonPostRegistration(editTextFirstName,editTextLastName,editTextUserName,editTextEmail,editTextPassword,editTextConfirmPassword,lblRegistrationStatus,userName,firstName,lastName,email,password).execute();
+                        jsonPostRegistration = (JsonPostRegistration) new  JsonPostRegistration(RegistrationActivity.this, editTextFirstName,editTextLastName,editTextUserName,editTextEmail,editTextPassword,editTextConfirmPassword,lblRegistrationStatus,userName,firstName,lastName,email,password).execute();
                     } else {
                         editTextConfirmPassword.setError("لطفا رمز عبور را درست وارد کنید!");
                     }
