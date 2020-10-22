@@ -12,8 +12,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-import datetime
-from django.utils.timezone import utc
 from django.http import HttpResponse, Http404, HttpResponseForbidden
 import os
 from django.contrib.auth.mixins import AccessMixin
@@ -24,8 +22,23 @@ from django_encrypted_filefield.crypt import Cryptographer
 from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 import magic
+from django.utils import timezone
+import pytz
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
+
+def create_token(student):
+    token, created =  Token.objects.get_or_create(user=student)
+    utc_now = timezone.now()
+    if not created:
+        # delete previously created token if it is expired
+        if token.created < utc_now - timezone.timedelta(hours=EXPIRE_HOURS):
+            token.delete()
+            token = Token.objects.create(user=student)
+        # update the created time of the token to keep it valid
+        token.created = timezone.now()
+        token.save()
+    return token
 
 class CustomAuthToken(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
@@ -80,16 +93,7 @@ class LoginApiView(APIView):
         password2 = request.data['password']
         if password1 != password2:
             raise ValidationError({'detail' : "Wrong Password"})
-        token, created =  Token.objects.get_or_create(user=student)
-        utc_now = datetime.datetime.utcnow().replace(tzinfo=utc)
-        if not created:
-            # delete previously created token if it is expired
-            if token.created < utc_now - datetime.timedelta(hours=EXPIRE_HOURS):
-                token.delete()
-                token = Token.objects.create(user=student)
-            # update the created time of the token to keep it valid
-            token.created = datetime.datetime.utcnow()
-            token.save()
+        token = create_token(student)
         return Response({
             'email': student.email,
             'token': token.key,
