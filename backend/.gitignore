@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+### dajngo migrations ###
+### comment if you are in production ###
+androidserver/migrations/*
+virtualclass/migrations/*
+virtualclass/api/migrations/*
+
 
 ### vscode ###
 .vscode/*
@@ -14,6 +20,7 @@ __pycache__/
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+.idea/*
 
 # Distribution / packaging
 .Python
