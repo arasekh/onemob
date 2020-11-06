@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django_hosts',
     'rest_framework.authtoken',
     'corsheaders',
+    'nested_admin',
 ]
 # AUTH_USER_MODEL = 'virtualclass.Student'
 

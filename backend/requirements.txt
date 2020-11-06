@@ -5,7 +5,7 @@ djangorestframework==3.11.1
 Markdown==3.2.2
 pytz==2020.1
 sqlparse==0.3.1
-django-hosts===4.0
+django-hosts==4.0
 django-email-utils==1.0.0
 emailutils==0.0.1
 django-cors-headers==3.5.0
@@ -15,3 +15,4 @@ libmagic==1.0
 python-magic-bin==0.4.14
 ffmpeg-python==0.2.0
 python-ffmpeg-video-streaming==0.1.14
+django-nested-admin==3.3.2

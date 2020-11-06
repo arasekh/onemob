@@ -25,12 +25,14 @@ import ffmpeg
 def select_storage():
     return getLocalVideoStorage() if settings.DEBUG else MyRemoteStorage()
 
+
 def compress_video_file(input_file_name):
     input_file = str(settings.MEDIA_ROOT + input_file_name)
     # output_file = str(path_root + output_file_name)
     stream = ffmpeg.input(input_file)
-    stream = ffmpeg.output(stream,  str(settings.MEDIA_ROOT + 'out.mp4'), crf=28, vcodec='libx265')
+    stream = ffmpeg.output(stream, str(settings.MEDIA_ROOT + 'out.mp4'), crf=28, vcodec='libx265')
     ffmpeg.run(stream)
+
 
 def convert_video_to_hls(arg):
     path_root = settings.MEDIA_ROOT + arg.title
@@ -38,7 +40,7 @@ def convert_video_to_hls(arg):
         os.makedirs(path_root)
     video = ffmpeg_streaming.input(str(settings.MEDIA_ROOT + arg.video_file.name))
     save_to = str(path_root + '/key')
-    #A URL (or a path) to access the key on your website
+    # A URL (or a path) to access the key on your website
     url = settings.MEDIA_URL + arg.title + '/key'
     # or url = '/"PATH TO THE KEY DIRECTORY"/key';
 
@@ -46,6 +48,7 @@ def convert_video_to_hls(arg):
     hls.encryption(save_to, url)
     hls.auto_generate_representations()
     hls.output(str(path_root + '/hls.m3u8'))
+
 
 class Video(models.Model):
     title = models.CharField(max_length=50, unique=True)
@@ -64,12 +67,73 @@ class Video(models.Model):
     def __str__(self):
         return self.title
 
+class Quiz(models.Model):
+	# author = models.ForeignKey(Student, on_delete=models.DO_NOTHING, default=None)
+	title = models.CharField(max_length=255, default='')
+	# created_at = models.DateTimeField(auto_now_add=True)
+	# times_taken = models.IntegerField(default=0, editable=False)
+
+	@property
+	def question_count(self):
+		return self.questions.count()
+	
+	class Meta:
+		verbose_name_plural = "Quizzes"
+		ordering = ['id']
+
+	def __str__(self):
+		return self.title
+
+class Question(models.Model):
+	quiz = models.ForeignKey(
+		Quiz, 
+		related_name='questions',
+		on_delete=models.DO_NOTHING
+	)
+	prompt = models.CharField(max_length=255, default='')
+
+	class Meta:
+		ordering = ['id']
+
+	def __str__(self):
+		return self.prompt
+
+class Answer(models.Model):
+	question = models.ForeignKey(
+		Question, 
+		related_name='answers', 
+		on_delete=models.DO_NOTHING
+	)
+	text = models.CharField(max_length=255)
+	correct = models.BooleanField(default=False)
+
+	def __str__(self):
+		return self.text
+
+# class Choice(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     title = models.CharField(max_length=100)
+#     is_true = models.BooleanField(default=False)
+#     def __str__(self):
+#         return self.title
+
+# class Exam(models.Model):
+#     question = models.CharField(max_length=100)
+#     FIRST = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("first choice"), related_name='first')
+#     SECOND = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("second choice"), related_name='second')
+#     THIRD = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("third choice"), related_name='third')
+#     FOURTH = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("fourth choice"), related_name='fourth')
+
+#     def __str__(self):
+#         return self.question
+
 class Student(User):
     email_valid = models.BooleanField(
         default=False,
         verbose_name=_("has valid email"),
     )
     videos = models.ManyToManyField(Video)
+
     def generate_token():
         """
         Get a random 64 character string.
@@ -89,6 +153,7 @@ class Student(User):
     class Meta:
         verbose_name_plural = _("Student")
         verbose_name_plural = _("Students")
+
     def __str__(self):
         return self.username
 
