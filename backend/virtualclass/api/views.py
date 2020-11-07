@@ -1,5 +1,5 @@
 from rest_framework import generics
-from virtualclass.models import Student, Video, Quiz
+from virtualclass.models import Student, Video, Quiz, QuizInfo, Question, Answer
 from .serializers import StudentListSerializer, StudentDetailSerializer, RegisterationSerializer, EmailVerificationSerializer, StudentVideosSerializer
 from django.shortcuts import get_object_or_404
 from virtualclass.authentication import ExpiringTokenAuthentication
@@ -25,6 +25,7 @@ import magic
 from django.utils import timezone
 import pytz
 from django.core import serializers
+import json
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
 
@@ -195,26 +196,69 @@ class getQuizApiView(ObtainAuthToken):
     def get(self, request, *args, **kwargs):
         title = kwargs.get("title")
         quiz = get_object_or_404(Quiz, title=title)
+        quiz_id = quiz.id
         student = request.auth.user.student
         student_quizzes = student.quizzes.all()
         if quiz in student_quizzes:
             questions_query_set = quiz.get_questions()
             quiz = []
             for question_query in questions_query_set:
-                question = question_query.prompt
+                question = {'id': question_query.id, 'text': question_query.prompt}
                 answers = []
                 for answer_query in question_query.get_answers():
-                    answers += [{'text': answer_query.text, 'correct': answer_query.correct}]
+                    answers += [{'id': answer_query.id, 'text': answer_query.text, 'correct': answer_query.correct}]
                 quiz += [{'question': question, 'answers': answers}]
             return Response({
                 'response': 'successfully got the quiz',
                 'username': student.username,
+                'quiz_id': quiz_id,
                 'quiz_title': title,
                 'quiz': quiz,
             })
         else:
             raise PermissionDenied()
 
+class submitQuizApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        student = request.auth.user.student
+        quiz_id = request.data['quiz_id']
+        quiz_answers = json.loads(request.data['quiz_answers'])
+        quiz = get_object_or_404(Quiz, id=quiz_id)
+        student_quizzes = student.quizzes.all()
+        score = 0
+        if quiz in student_quizzes:
+            quiz_questions = quiz.get_questions()
+            for answer in quiz_answers:
+                question_id = answer['question_id']
+                answer_id = answer['answer_id']
+                try:
+                    # question = get_object_or_404(Question, id=question_id)
+                    question = Question.objects.get(id=question_id)
+                    if question not in quiz_questions:
+                        raise Exception()
+                except:
+                    raise ValidationError({'detail': 'question ids provided are incorrect'})
+                quiz_answers = question.get_answers()
+                try:
+                    # answer = get_object_or_404(Answer, id=answer_id)
+                    answer = Answer.objects.get(id=answer_id)
+                    if answer not in quiz_answers:
+                        raise Exception()
+                except:
+                    raise ValidationError({'detail': 'answer ids provided are incorrect'})
+                if answer.correct:
+                    score += 1
+            quizInfo = QuizInfo.objects.create(quiz=quiz, student=student, score=score)
+            return Response({
+                'response': 'successfully submitted the quiz',
+                'username': student.username,
+                'score': score,
+            })
+        else:
+            raise PermissionDenied()
+    
 class EmailVerification(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
