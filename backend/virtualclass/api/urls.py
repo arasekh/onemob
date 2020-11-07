@@ -14,6 +14,8 @@ urlpatterns = [
     path('login/', views.LoginApiView.as_view(), name='login'),
     path(r'video/<str:title>/', views.DownloadVideoApiView.as_view(), name='download_video'),
     path('videos/', views.ListVideosApiView.as_view(), name='list_videos'),
+    path('quizzes/', views.ListQuizzesApiView.as_view(), name='list_quizzes'),
+    path('get-quiz/<str:title>/', views.getQuizApiView.as_view(), name='get_quiz'),
     re_path(
         r'^fetch/(?P<path>.+)/$',  # up to you, but path is required
         views.FetchVideoView.as_view(),          # your view, your permissions

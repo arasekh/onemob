@@ -1,5 +1,5 @@
 from rest_framework import generics
-from virtualclass.models import Student, Video
+from virtualclass.models import Student, Video, Quiz
 from .serializers import StudentListSerializer, StudentDetailSerializer, RegisterationSerializer, EmailVerificationSerializer, StudentVideosSerializer
 from django.shortcuts import get_object_or_404
 from virtualclass.authentication import ExpiringTokenAuthentication
@@ -24,6 +24,7 @@ from django.core.exceptions import PermissionDenied
 import magic
 from django.utils import timezone
 import pytz
+from django.core import serializers
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
 
@@ -173,6 +174,46 @@ class ListVideosApiView(ObtainAuthToken):
             'username': student.username,
             'videos': videos,
         })
+
+class ListQuizzesApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        student = request.auth.user.student
+        quizzes = student.quizzes.all()
+        quiz_titles = [quiz.title for quiz in quizzes]
+
+        return Response({
+            'response': 'successfully got the quizzes',
+            'username': student.username,
+            'quiz_titles': quiz_titles,
+        })
+
+class getQuizApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        title = kwargs.get("title")
+        quiz = get_object_or_404(Quiz, title=title)
+        student = request.auth.user.student
+        student_quizzes = student.quizzes.all()
+        if quiz in student_quizzes:
+            questions_query_set = quiz.get_questions()
+            quiz = []
+            for question_query in questions_query_set:
+                question = question_query.prompt
+                answers = []
+                for answer_query in question_query.get_answers():
+                    answers += [{'text': answer_query.text, 'correct': answer_query.correct}]
+                quiz += [{'question': question, 'answers': answers}]
+            return Response({
+                'response': 'successfully got the quiz',
+                'username': student.username,
+                'quiz_title': title,
+                'quiz': quiz,
+            })
+        else:
+            raise PermissionDenied()
 
 class EmailVerification(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]

@@ -69,46 +69,57 @@ class Video(models.Model):
 
 class Quiz(models.Model):
 	# author = models.ForeignKey(Student, on_delete=models.DO_NOTHING, default=None)
-	title = models.CharField(max_length=255, default='')
+    title = models.CharField(max_length=255, default='')
 	# created_at = models.DateTimeField(auto_now_add=True)
 	# times_taken = models.IntegerField(default=0, editable=False)
 
-	@property
-	def question_count(self):
-		return self.questions.count()
-	
-	class Meta:
-		verbose_name_plural = "Quizzes"
-		ordering = ['id']
+    @property
+    def question_count(self):
+        return self.questions.count()
 
-	def __str__(self):
-		return self.title
+    def get_questions(self):
+        return self.questions.all()
+	
+    class Meta:
+        verbose_name_plural = "Quizzes"
+        ordering = ['id']
+
+    def __str__(self):
+        return self.title
 
 class Question(models.Model):
-	quiz = models.ForeignKey(
-		Quiz, 
-		related_name='questions',
-		on_delete=models.DO_NOTHING
-	)
-	prompt = models.CharField(max_length=255, default='')
+    quiz = models.ForeignKey(
+        Quiz, 
+        related_name='questions',
+        on_delete=models.DO_NOTHING
+    )
+    prompt = models.CharField(max_length=255, default='')
 
-	class Meta:
-		ordering = ['id']
+    def get_answers(self):
+        return self.answers.all()
 
-	def __str__(self):
-		return self.prompt
+    class Meta:
+        verbose_name_plural = "Questions"
+        ordering = ['id']
+
+    def __str__(self):
+        return self.prompt
 
 class Answer(models.Model):
-	question = models.ForeignKey(
-		Question, 
-		related_name='answers', 
-		on_delete=models.DO_NOTHING
-	)
-	text = models.CharField(max_length=255)
-	correct = models.BooleanField(default=False)
+    question = models.ForeignKey(
+        Question, 
+        related_name='answers', 
+        on_delete=models.DO_NOTHING
+    )
+    text = models.CharField(max_length=255)
+    correct = models.BooleanField(default=False)
 
-	def __str__(self):
-		return self.text
+    class Meta:
+        verbose_name_plural = "Answers"
+
+    def __str__(self):
+        return self.text
+
 
 # class Choice(models.Model):
 #     id = models.AutoField(primary_key=True)
@@ -132,7 +143,10 @@ class Student(User):
         default=False,
         verbose_name=_("has valid email"),
     )
-    videos = models.ManyToManyField(Video)
+    videos = models.ManyToManyField(Video, blank=True)
+    quizzes = models.ManyToManyField(Quiz, blank=True, related_name='quizzes')
+    quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True, related_name='quiz_info')
+
 
     def generate_token():
         """
@@ -187,6 +201,11 @@ class Student(User):
         self.last_login = timezone.now()
         self.email = self.normalize_email(self.email)
         super(Student, self).save(*args, **kwargs)
+
+class QuizInfo(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='students')
+    score = models.IntegerField()
 
 # @receiver(post_save, sender='virtualclass.Student')
 # def create_auth_token(sender, instance=None, created=False, **kwargs):

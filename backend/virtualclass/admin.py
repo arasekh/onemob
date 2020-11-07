@@ -1,7 +1,7 @@
 from django.contrib import admin
 import nested_admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import Student, Video, Quiz, Question, Answer
+from .models import Student, Video, Quiz, Question, Answer, QuizInfo
 from django.contrib.auth.models import Group
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -9,10 +9,16 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.db.models import Q
 
+
+class QuizInfoInline(admin.TabularInline):
+    model = Student.quiz_info.through
+
 class QuizAdmin(admin.ModelAdmin):
 	search_fields = ['title']
 	list_display=['id', 'title']
-	# list_filter = ['author']
+	inlines = [
+        QuizInfoInline,
+    ]
 
 class AnswerInline(admin.TabularInline):
 	model = Answer
@@ -63,7 +69,12 @@ class AnswerAdmin(admin.ModelAdmin):
 	list_display=['text', 'correct', 'question']
 	list_filter=[AnswerQuestionFilter, ]
 
-admin.site.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    inlines = [
+        QuizInfoInline,
+    ]
+
+admin.site.register(Student, StudentAdmin)
 admin.site.register(Video)
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Question, QuestionAdmin)
