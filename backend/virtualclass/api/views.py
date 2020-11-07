@@ -42,6 +42,19 @@ def create_token(student):
         token.save()
     return token
 
+# important Note: This method is called only after login and with a valid token
+# so when this method is called, the callee must have had a valid token   
+def extend_token_after_login(student):
+    token, created =  Token.objects.get_or_create(user=student)
+    utc_now = timezone.now()
+    if created or token.created < utc_now - timezone.timedelta(hours=EXPIRE_HOURS):
+        # You are in an invalid state because you don't even have a token or your token is expired
+        raise PermissionDenied()
+    # update the created time of the token to keep it valid
+    token.created = timezone.now()
+    token.save()
+    return token
+
 class CustomAuthToken(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -140,6 +153,8 @@ class DownloadVideoApiView(ObtainAuthToken):
         title = kwargs.get("title")
         video = get_object_or_404(Video, title=title)
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         student_videos = student.videos.all()
         if video in student_videos:
             video_path = video.video_file.path
@@ -167,6 +182,8 @@ class ListVideosApiView(ObtainAuthToken):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         videos = student.videos.all()
         videos = [{'title': video.title, 'name': video.filename} for video in videos]
 
@@ -181,6 +198,8 @@ class ListQuizzesApiView(ObtainAuthToken):
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         quizzes = student.quizzes.all()
         quiz_titles = [quiz.title for quiz in quizzes]
 
@@ -198,6 +217,8 @@ class getQuizApiView(ObtainAuthToken):
         quiz = get_object_or_404(Quiz, title=title)
         quiz_id = quiz.id
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         student_quizzes = student.quizzes.all()
         if quiz in student_quizzes:
             questions_query_set = quiz.get_questions()
@@ -223,6 +244,8 @@ class submitQuizApiView(ObtainAuthToken):
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         quiz_id = request.data['quiz_id']
         quiz_answers = json.loads(request.data['quiz_answers'])
         quiz = get_object_or_404(Quiz, id=quiz_id)
@@ -264,6 +287,8 @@ class EmailVerification(ObtainAuthToken):
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
         if request.data['verification_key'] != student.verification_key:
             raise ValidationError({'detail': 'verification_key provided is incorrect'})
         student.email_valid = True
