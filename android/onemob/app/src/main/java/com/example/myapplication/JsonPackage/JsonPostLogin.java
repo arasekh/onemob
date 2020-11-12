@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -17,6 +18,7 @@ import com.example.myapplication.LoginActivity;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.UtilToken;
+import com.example.myapplication.VerificationActivity;
 import com.example.myapplication.ui.notifications.NotificationsFragment;
 import com.example.myapplication.ui.videos.VideosFragment;
 
@@ -39,7 +41,7 @@ public class JsonPostLogin extends AsyncTask {
 
     String username = "";
     String password = "";
-
+    boolean validEmail = false;
     String httpCode;
 
     String tokenLogin = "0";
@@ -83,9 +85,9 @@ public class JsonPostLogin extends AsyncTask {
                 Log.e("JsonObject Error!", e.getMessage());
             }
             OkHttpClient okHttpClient = new OkHttpClient();
-            String adminInfo = Credentials.basic("Alineo","145");
+            String adminInfo = Credentials.basic("alireza","<!--comment>");
             RequestBody requestBody = RequestBody.create(jsonMediaType, jsonObject.toString());
-            Request request = new Request.Builder().url("http://192.168.1.5:8000/api/login/").post(requestBody).addHeader("Authorization",adminInfo).build();
+            Request request = new Request.Builder().url("http://138.201.6.240:8000/api/login/").post(requestBody).addHeader("Authorization",adminInfo).build();
             Response response = null;
             String result = "";
             JSONObject jsonObjectToken = null;
@@ -95,7 +97,10 @@ public class JsonPostLogin extends AsyncTask {
                 Log.d("httpCode", httpCode);
                 result = response.body().string();
                 jsonObjectToken = new JSONObject(result);
-                tokenLogin = jsonObjectToken.getString("token");
+                if (httpCode.equals("200")){
+                    tokenLogin = jsonObjectToken.getString("token");
+                    validEmail = jsonObjectToken.getBoolean("email_valid");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 tokenLogin = "0";
@@ -118,17 +123,30 @@ public class JsonPostLogin extends AsyncTask {
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
         try {
-            if (httpCode.equals("200")){
-                UtilToken.token = tokenLogin;
-                Intent intentToMain = new Intent(activity, MainActivity.class);
-                activity.startActivity(intentToMain);
-            } else if (httpCode.equals("400") || httpCode.equals("404")){
-                editTextUserName.setText("");
-                editTextPassword.setText("");
-                editTextUserName.setError("لطفا نام کاربری معتبر وارد کنید!");
-                editTextPassword.setError("لطفا رمز عبور معتبر وارد کنید!");
-                lblLoginStatus.setTextColor(Color.RED);
-                lblLoginStatus.setText("نام کاربری یا رمز عبور معتبر نمی باشد!");
+            if (validEmail){
+                if (httpCode.equals("200")){
+                    UtilToken.token = tokenLogin;
+                    Intent intentToMain = new Intent(activity, MainActivity.class);
+                    activity.startActivity(intentToMain);
+                } else if (httpCode.equals("400") || httpCode.equals("404")){
+                    editTextUserName.setText("");
+                    editTextPassword.setText("");
+                    editTextUserName.setError("لطفا نام کاربری معتبر وارد کنید!");
+                    editTextPassword.setError("لطفا رمز عبور معتبر وارد کنید!");
+                    Toast.makeText(activity, "نام کاربری یا رمز عبور معتبر نمی باشد!", Toast.LENGTH_LONG).show();
+                    lblLoginStatus.setTextColor(Color.RED);
+                    lblLoginStatus.setText("نام کاربری یا رمز عبور معتبر نمی باشد!");
+                }
+            } else {
+                if (httpCode.equals("404")){
+                    Toast.makeText(activity, "کاربر پیدا نشد!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(activity, "لطفا ایمیل خود را تایید کنید!", Toast.LENGTH_LONG).show();
+                    lblLoginStatus.setTextColor(Color.RED);
+                    lblLoginStatus.setText("لطفا ایمیل خود را تایید کنید!");
+                    Intent intentToVerification = new Intent(activity, VerificationActivity.class);
+                    activity.startActivity(intentToVerification);
+                }
             }
         } catch (Exception e){
             e.printStackTrace();

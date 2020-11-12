@@ -9,6 +9,7 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,6 +31,7 @@ dependencies {
     implementation 'com.github.pgmacdesign:silicompressor:3.0.6'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.7.3'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.7.3'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.7.3'
 //    implementation 'com.android.support:design:24.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

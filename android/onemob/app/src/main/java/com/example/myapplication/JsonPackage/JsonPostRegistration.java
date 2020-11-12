@@ -7,7 +7,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.LoginActivity;
+import com.example.myapplication.UtilToken;
 import com.example.myapplication.VerificationActivity;
 
 import org.json.JSONException;
@@ -83,9 +86,9 @@ public class JsonPostRegistration extends AsyncTask {
                 Log.e("JsonObject Error!", e.getMessage());
             }
             OkHttpClient okHttpClient = new OkHttpClient();
-            String adminInfo = Credentials.basic("Alineo", "145");
+            String adminInfo = Credentials.basic("alireza","<!--comment>");
             RequestBody requestBody = RequestBody.create(jsonMediaType, jsonObject.toString());
-            Request request = new Request.Builder().url("http://192.168.1.5:8000/api/create/").post(requestBody).addHeader("Authorization", adminInfo).build();
+            Request request = new Request.Builder().url("http://138.201.6.240:8000/api/create/").post(requestBody).addHeader("Authorization", adminInfo).build();
             Response response = null;
             JSONObject jsonObjectResult = null;
             String result = "";
@@ -95,7 +98,9 @@ public class JsonPostRegistration extends AsyncTask {
                 result = response.body().string();
                 jsonObjectResult = new JSONObject(result);
                 httpCode = String.valueOf(response.code());
-                token = jsonObjectResult.getString("response");
+                if (httpCode.equals("200")){
+                    token = jsonObjectResult.getString("token");
+                }
                 code = response.code();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -117,11 +122,15 @@ public class JsonPostRegistration extends AsyncTask {
         super.onPostExecute(o);
         try {
             if (httpCode.equals("200")){
+                Toast.makeText(context,"ثبت نام با موفقیت انجام شد!", Toast.LENGTH_LONG).show();
                 lblRegistrationStatus.setTextColor(Color.BLUE);
                 lblRegistrationStatus.setText("ثبت نام با موفقیت انجام شد!");
+                UtilToken.token = token;
+                Log.d("UtilToken", token);
                 Intent intentToVerification = new Intent(context, VerificationActivity.class);
                 context.startActivity(intentToVerification);
             } else {
+                Toast.makeText(context,"ثبت نام موفقیت آمیز نبود!", Toast.LENGTH_LONG).show();
                 lblRegistrationStatus.setTextColor(Color.RED);
                 lblRegistrationStatus.setText("ثبت نام موفقیت آمیز نبود!");
             }

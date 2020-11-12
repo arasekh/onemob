@@ -2,11 +2,14 @@ package com.example.myapplication.JsonPackage;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.example.myapplication.LoginActivity;
 import com.example.myapplication.Video;
 
 import org.json.JSONArray;
@@ -27,22 +30,12 @@ import okhttp3.Response;
 
 public class JsonVideosDownload extends AsyncTask {
 
-    ArrayList<JSONObject> videosJsonObjectArrayList = new ArrayList<>();
-    String[] videosName = null;
-    String[] videosTitle = null;
     String token;
-    Activity activity = null;
     Context context = null;
-    ListView videosListView;
-    String path;
-    File file;
-
-    String videoTitle = "video";
-    String fileName = "VID_20970721_113800_342.mp4";
-    String tokenVideoDownload = "";
+    int httpCode = 0;
+    String videoTitle = "";
+    String fileName = "";
     Response responseVideoDownload = null;
-    VideoView videoView = null;
-//    Context context = null;
     File fileVideoDownload = null;
     File root;
     FileOutputStream fileOutputStream;
@@ -69,7 +62,8 @@ public class JsonVideosDownload extends AsyncTask {
             Request requestVideoDownload = new Request.Builder().url("http://192.168.1.5:8000/api/video/"+videoTitle).method("GET", null).addHeader("Authorization", "Token "+token).build();
             responseVideoDownload = null;
             try {
-                pathVideoDownload = "/storage/emulated/0/OneMob";
+//                pathVideoDownload = "/storage/emulated/0/OneMob";
+                pathVideoDownload = context.getExternalFilesDir(null).getAbsolutePath();
                 fileVideoDownload = new File(pathVideoDownload);
                 if (!fileVideoDownload.exists()){
                     fileVideoDownload.mkdirs();
@@ -77,6 +71,7 @@ public class JsonVideosDownload extends AsyncTask {
                 }
                 root = new File(fileVideoDownload, fileName);
                 responseVideoDownload = clientVideoDownload.newCall(requestVideoDownload).execute();
+                httpCode = responseVideoDownload.code();
                 fileOutputStream = new FileOutputStream(root);
                 fileOutputStream.write(responseVideoDownload.body().bytes());
                 fileOutputStream.close();
@@ -94,16 +89,32 @@ public class JsonVideosDownload extends AsyncTask {
         return null;
     }
 
+    @Override
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        try {
+            if (httpCode == 401){
+                Toast.makeText(context, "کاربر شناخته شده نیست!", Toast.LENGTH_LONG).show();
+                Intent intentToLogin = new Intent(context, LoginActivity.class);
+                context.startActivity(intentToLogin);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public int getFileCount(){
         int fileCount = 0;
-        File dir = new File("/storage/emulated/0/OneMob");
+//        File dir = new File("/storage/emulated/0/OneMob");
+        File dir = new File(context.getExternalFilesDir(null).getAbsolutePath());
         File[] files = dir.listFiles();
         fileCount = files.length;
         return fileCount;
     }
 
     public String[] getFileName(){
-        File dir = new File("/storage/emulated/0/OneMob");
+//        File dir = new File("/storage/emulated/0/OneMob");
+        File dir = new File(context.getExternalFilesDir(null).getAbsolutePath());
         File[] files = dir.listFiles();
         String[] filesName = new String[files.length];
         for (int i = 0 ; i < files.length ; i++){

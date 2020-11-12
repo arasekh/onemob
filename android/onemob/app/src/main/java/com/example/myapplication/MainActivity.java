@@ -2,9 +2,11 @@ package com.example.myapplication;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceControl;
 
@@ -18,8 +20,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -40,6 +43,8 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     String token;
+    String path;
+    File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +53,30 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
+        path = MainActivity.this.getExternalFilesDir(null).getAbsolutePath();
+        Log.d("fillllll", path);
+        file = MainActivity.this.getExternalFilesDir(null);
+//        file = new File(path+"/oneMob/");
+        if (!file.exists()){
+            file.mkdirs();
+            Log.d("FILE NOT EXISTS", file.getAbsolutePath());
+        } else {
+            Log.d("FILE EXISTS", file.getAbsolutePath());
+        }
+
+        try {
+            File downloadFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+            File[] downloadList = downloadFile.listFiles();
+            int downloadCount = downloadList.length;
+            Log.d("downloadCount", String.valueOf(downloadCount));
+        } catch (NullPointerException e){
+            e.printStackTrace();
+        }
+
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},111);
         try {
             try {
+                Log.d("fileMain", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
                 token = UtilToken.token;
                 Log.d("tokenUtil", token);
                 Intent intent  = new Intent(MainActivity.this, LoginActivity.class);
@@ -69,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

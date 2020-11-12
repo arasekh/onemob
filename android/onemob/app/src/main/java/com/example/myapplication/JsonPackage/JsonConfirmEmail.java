@@ -62,7 +62,7 @@ public class JsonConfirmEmail extends AsyncTask {
             }
             OkHttpClient okHttpClient = new OkHttpClient();
             RequestBody requestBody = RequestBody.create(jsonMediaType,confirmEmailJson.toString());
-            Request request = new Request.Builder().url("http://192.168.1.5:8000/api/verify-email/").post(requestBody).addHeader("Authorization", "Token "+tokenConfirmEmail).build();
+            Request request = new Request.Builder().url("http://138.201.6.240:8000/api/verify-email/").post(requestBody).addHeader("Authorization", "Token "+tokenConfirmEmail).build();
             Response response = null;
             String result = "";
             JSONObject jsonObjectResponse = null;

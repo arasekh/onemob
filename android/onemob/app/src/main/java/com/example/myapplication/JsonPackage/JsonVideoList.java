@@ -67,7 +67,7 @@ public class JsonVideoList extends AsyncTask {
                 Log.d("FILE EXISTS", file.getAbsolutePath());
             }
             OkHttpClient client = new OkHttpClient.Builder().build();
-            Request request = new Request.Builder().url("http://192.168.1.5:8000/api/videos").method("GET", null).addHeader("Authorization", "Token "+token).build();
+            Request request = new Request.Builder().url("http://138.201.6.240:8000/api/videos").method("GET", null).addHeader("Authorization", "Token "+token).build();
             Response response = null;
             String resultVideoList = "";
             JSONObject jsonObject = null;

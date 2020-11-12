@@ -92,10 +92,11 @@ class ShowVideoAsyncTask extends AsyncTask{
     protected Object doInBackground(Object[] objects) {
         try {
             OkHttpClient client = new OkHttpClient.Builder().build();
-            Request request = new Request.Builder().url("http://192.168.1.5:8000/api/video/"+videoTitle).method("GET", null).addHeader("Authorization", "Token "+token).build();
+            Request request = new Request.Builder().url("http://138.201.6.240:8000/api/video/"+videoTitle).method("GET", null).addHeader("Authorization", "Token "+token).build();
             response = null;
             try {
-                path = "/storage/emulated/0/OneMob";
+//                path = "/storage/emulated/0/OneMob";
+                path = context.getExternalFilesDir(null).getAbsolutePath();
                 file = new File(path);
                 if (!file.exists()){
                     file.mkdirs();
@@ -126,7 +127,7 @@ class ShowVideoAsyncTask extends AsyncTask{
         try {
             File fileSecond = new File(path+"/"+fileName);
             Log.d("file", file.getAbsolutePath());
-            Log.d("fileOutputStream", fileOutputStream.toString());
+//            Log.d("fileOutputStream", fileOutputStream.toString());
             videoView.setVideoPath(fileSecond.getAbsolutePath());
             videoView.start();
             MediaController controller = new MediaController(context);
