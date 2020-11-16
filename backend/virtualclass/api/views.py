@@ -162,7 +162,7 @@ class DownloadVideoApiView(ObtainAuthToken):
     def get(self, request, *args, **kwargs):
         title = kwargs.get("title")
         video = get_object_or_404(Video, title=title)
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         student_videos = student.videos.all()
@@ -191,7 +191,7 @@ class ListVideosApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         videos = student.videos.all()
@@ -207,7 +207,7 @@ class ListQuizzesApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request, *args, **kwargs):
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         quizzes = student.quizzes.all()
@@ -226,7 +226,7 @@ class getQuizApiView(ObtainAuthToken):
         title = kwargs.get("title")
         quiz = get_object_or_404(Quiz, title=title)
         quiz_id = quiz.id
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         student_quizzes = student.quizzes.all()
@@ -253,7 +253,7 @@ class submitQuizApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         quiz_id = request.data['quiz_id']
@@ -296,7 +296,7 @@ class EmailVerification(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         if request.data['verification_key'] != student.verification_key:
@@ -313,7 +313,7 @@ class EmailResend(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
-        student = request.auth.user.student
+        student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
         raiseErrorIfTimeoutPassed(student)

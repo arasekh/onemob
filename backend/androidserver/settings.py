@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'virtualclass',
+    # 'virtualclass.apps.VirtualclassConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'virtualclass',
     'django_hosts',
     'rest_framework.authtoken',
     'corsheaders',
@@ -59,7 +60,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
-# AUTH_USER_MODEL = 'virtualclass.Student'
+AUTH_USER_MODEL = 'virtualclass.Student'
 
 
 ROOT_URLCONF = 'androidserver.urls'

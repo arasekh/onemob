@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import forms
+# commnt this to avoid errors concerning AUTH_USER_MODEL
+# from django.contrib.auth import forms
 from django.utils import timezone
 from email_utils import send_email
 from django.core.mail import send_mail
@@ -122,13 +123,14 @@ class Answer(models.Model):
     def __str__(self):
         return self.text    
 
-class Student(User):
-    # email = models.EmailField(_('email address'), unique=True)
+
+class Student(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
     email_valid = models.BooleanField(
         default=False,
         verbose_name=_("has valid email"),
     )
-    email_sent_time = models.DateTimeField() 
+    email_sent_time = models.DateTimeField(blank=True, null=True)
     videos = models.ManyToManyField(Video, blank=True)
     quizzes = models.ManyToManyField(Quiz, blank=True, related_name='quizzes')
     quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True, related_name='quiz_info')

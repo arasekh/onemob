@@ -74,6 +74,7 @@ class StudentAdmin(admin.ModelAdmin):
         QuizInfoInline,
     ]
 
+# admin.site.register(Student, UserAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Video)
 admin.site.register(Quiz, QuizAdmin)
