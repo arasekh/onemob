@@ -1,6 +1,7 @@
 from rest_framework import generics
 from virtualclass.models import Student, Video, Quiz, QuizInfo, Question, Answer
-from .serializers import StudentListSerializer, StudentDetailSerializer, RegisterationSerializer, EmailVerificationSerializer, StudentVideosSerializer
+from .serializers import (StudentListSerializer, StudentDetailSerializer, RegisterationSerializer, 
+                            EmailVerificationSerializer, StudentVideosSerializer)
 from django.shortcuts import get_object_or_404
 from virtualclass.authentication import ExpiringTokenAuthentication
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
@@ -28,6 +29,7 @@ from django.core import serializers
 import json
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
+EMAIL_SENT_TIMEOUT = getattr(settings, 'EMAIL_SENT_TIMEOUT', 1)
 
 def create_token(student):
     token, created =  Token.objects.get_or_create(user=student)
@@ -54,6 +56,14 @@ def extend_token_after_login(student):
     token.created = timezone.now()
     token.save()
     return token
+
+def raiseErrorIfTimeoutPassed(student):
+    utc_now = timezone.now()
+    tolerance = 5 # this is because of delay
+    timeout = EMAIL_SENT_TIMEOUT - tolerance
+    if student.email_sent_time > utc_now - timezone.timedelta(seconds=timeout):
+        # You are in an invalid state because you can't receive an email while your timeout has not reached!
+        raise ValidationError({'detail' : 'Sorry, We cannot send you an email within less than a minute!'})
 
 class CustomAuthToken(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
@@ -299,6 +309,20 @@ class EmailVerification(ObtainAuthToken):
             'email': student.email,
         })
     
+class EmailResend(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        student = request.auth.user.student
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
+        raiseErrorIfTimeoutPassed(student)
+        student.send_verification_email()
+        return Response({
+            'response': 'successfully resent the email',
+            'username': student.username,
+            'email': student.email,
+        })
 
 class StudentLoginView(APIView):
     queryset = Student.objects.all()

@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'nested_admin',
 ]
-# AUTH_USER_MODEL = 'virtualclass.Student'
 
 MIDDLEWARE = [
     'django_hosts.middleware.HostsRequestMiddleware',
@@ -60,6 +59,8 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
+# AUTH_USER_MODEL = 'virtualclass.Student'
+
 
 ROOT_URLCONF = 'androidserver.urls'
 
@@ -153,7 +154,8 @@ REST_FRAMEWORK = {
         # 'rest_framework.authentication.TokenAuthentication',
     ],
 }
-REST_FRAMEWORK_TOKEN_EXPIRE_HOURS = 1
+REST_FRAMEWORK_TOKEN_EXPIRE_HOURS = 1  # one hour
+EMAIL_SENT_TIMEOUT = 60  # 60 seconds
 ROOT_HOSTCONF = 'androidserver.hosts'
 DEFAULT_HOST = 'index'
 PARENT_HOST = 'localhost:8000'

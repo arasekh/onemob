@@ -11,6 +11,7 @@ urlpatterns = [
     path(r'get/<str:username>/', views.StudentDetailApiView.as_view(), name='detail'),
     path('create/', views.RegisterationApiView.as_view(), name='signup'),
     path('verify-email/', views.EmailVerification.as_view(), name="verify-email"),
+    path('resend-email/', views.EmailResend.as_view(), name="resend-email"),
     path('login/', views.LoginApiView.as_view(), name='login'),
     path(r'video/<str:title>/', views.DownloadVideoApiView.as_view(), name='download_video'),
     path('videos/', views.ListVideosApiView.as_view(), name='list_videos'),

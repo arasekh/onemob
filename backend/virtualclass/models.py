@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import forms
 from django.utils import timezone
@@ -20,6 +21,7 @@ from time import sleep
 import os
 from django_encrypted_filefield.fields import EncryptedFileField
 import ffmpeg
+from django.utils import timezone
 
 
 def select_storage():
@@ -118,31 +120,15 @@ class Answer(models.Model):
         verbose_name_plural = "Answers"
 
     def __str__(self):
-        return self.text
-
-
-# class Choice(models.Model):
-#     id = models.AutoField(primary_key=True)
-#     title = models.CharField(max_length=100)
-#     is_true = models.BooleanField(default=False)
-#     def __str__(self):
-#         return self.title
-
-# class Exam(models.Model):
-#     question = models.CharField(max_length=100)
-#     FIRST = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("first choice"), related_name='first')
-#     SECOND = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("second choice"), related_name='second')
-#     THIRD = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("third choice"), related_name='third')
-#     FOURTH = models.OneToOneField(Choice, on_delete=models.CASCADE, verbose_name=_("fourth choice"), related_name='fourth')
-
-#     def __str__(self):
-#         return self.question
+        return self.text    
 
 class Student(User):
+    # email = models.EmailField(_('email address'), unique=True)
     email_valid = models.BooleanField(
         default=False,
         verbose_name=_("has valid email"),
     )
+    email_sent_time = models.DateTimeField() 
     videos = models.ManyToManyField(Video, blank=True)
     quizzes = models.ManyToManyField(Quiz, blank=True, related_name='quizzes')
     quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True, related_name='quiz_info')
@@ -196,6 +182,8 @@ class Student(User):
             subject='Please do not reply this message',
             template_name='virtualclass/email-verification',
         )
+        self.email_sent_time = timezone.now()
+        self.save()
 
     def save(self, *args, **kwargs):
         self.last_login = timezone.now()
