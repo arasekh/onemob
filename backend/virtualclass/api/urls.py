@@ -7,8 +7,6 @@ FETCH_URL_NAME = FETCH_URL_NAME[FETCH_URL_NAME.find(':')+1:] # delete namespace 
 app_name = 'virtualclass'
 
 urlpatterns = [
-    path('', views.CustomAuthToken.as_view(), name='student_list'),
-    path(r'get/<str:username>/', views.StudentDetailApiView.as_view(), name='detail'),
     path('create/', views.RegisterationApiView.as_view(), name='signup'),
     path('verify-email/', views.EmailVerification.as_view(), name="verify-email"),
     path('resend-email/', views.EmailResend.as_view(), name="resend-email"),
