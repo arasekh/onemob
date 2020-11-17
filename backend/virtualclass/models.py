@@ -173,7 +173,7 @@ class Student(AbstractUser):
         return email
 
     def update_verification_token(self):
-        self.verification_key = generate_token()
+        self.verification_key = Student.generate_token()
         self.save()
 
     def send_verification_email(self):

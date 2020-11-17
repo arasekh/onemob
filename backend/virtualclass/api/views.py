@@ -57,13 +57,25 @@ def extend_token_after_login(student):
     token.save()
     return token
 
-def raiseErrorIfTimeoutPassed(student):
+def raiseErrorIfTimeoutPassedOrVerified(student):
     utc_now = timezone.now()
     tolerance = 5 # this is because of delay
     timeout = EMAIL_SENT_TIMEOUT - tolerance
     if student.email_sent_time > utc_now - timezone.timedelta(seconds=timeout):
         # You are in an invalid state because you can't receive an email while your timeout has not reached!
         raise ValidationError({'detail' : 'Sorry, We cannot send you an email within less than a minute!'})
+    if student.email_valid:
+        raise ValidationError({'detail' : 'Your email is already verified!'})
+
+def raiseErrorIfTokenExpired(student):
+    utc_now = timezone.now()
+    tolerance = 5 # this is because of delay
+    timeout = EMAIL_SENT_TIMEOUT + tolerance
+    if utc_now - student.email_sent_time >=  timezone.timedelta(seconds=timeout):
+        # You are in an invalid state because you can't receive an email while your timeout has not reached!
+        raise ValidationError({'detail' : 'Email verification Token is expired. Please Ask us to send you a new one!'})
+    if student.email_valid:
+        raise ValidationError({'detail' : 'Your email is already verified!'})
 
 class CustomAuthToken(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
@@ -299,6 +311,7 @@ class EmailVerification(ObtainAuthToken):
         student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
+        raiseErrorIfTokenExpired(student)
         if request.data['verification_key'] != student.verification_key:
             raise ValidationError({'detail': 'verification_key provided is incorrect'})
         student.email_valid = True
@@ -316,7 +329,7 @@ class EmailResend(ObtainAuthToken):
         student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
-        raiseErrorIfTimeoutPassed(student)
+        raiseErrorIfTimeoutPassedOrVerified(student)
         # change the verification token for security reasons
         student.update_verification_token()
         student.send_verification_email()
