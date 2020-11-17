@@ -172,6 +172,10 @@ class Student(AbstractUser):
             email = email_name + '@' + domain_part.lower()
         return email
 
+    def update_verification_token(self):
+        self.verification_key = generate_token()
+        self.save()
+
     def send_verification_email(self):
         context = {
             "username": self.username,

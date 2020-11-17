@@ -317,6 +317,8 @@ class EmailResend(ObtainAuthToken):
         # extend the student token because he/she is active
         extend_token_after_login(student)
         raiseErrorIfTimeoutPassed(student)
+        # change the verification token for security reasons
+        student.update_verification_token()
         student.send_verification_email()
         return Response({
             'response': 'successfully resent the email',
