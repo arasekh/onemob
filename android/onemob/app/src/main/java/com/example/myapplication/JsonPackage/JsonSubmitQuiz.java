@@ -34,6 +34,7 @@ public class JsonSubmitQuiz extends AsyncTask {
     String token;
     ArrayList<String> questionsId = new ArrayList<>();
     ArrayList<String> answersId = new ArrayList<>();
+    ArrayList<String> trueAnswers = new ArrayList<>();
 
     Context context;
     TextView lblShowScore;
@@ -49,28 +50,17 @@ public class JsonSubmitQuiz extends AsyncTask {
         this.context = context;
     }
 
+    public JsonSubmitQuiz(String token, ArrayList<String> questionsId, ArrayList<String> answersId, ArrayList<String> trueAnswers, Context context) {
+        this.token = token;
+        this.questionsId = questionsId;
+        this.answersId = answersId;
+        this.trueAnswers = trueAnswers;
+        this.context = context;
+    }
+
     @Override
     protected Object doInBackground(Object[] objects) {
         try {
-//            JSONObject jsonObjectSubmitQuiz = new JSONObject();
-//            JSONObject jsonObjectAnswers = new JSONObject();
-//            try {
-//                jsonObjectAnswers.put("question_id", 2);
-//                jsonObjectAnswers.put("answer_id", 7);
-//            } catch (JSONException e){
-//                e.printStackTrace();
-//            }
-//            try {
-//                jsonObjectSubmitQuiz.put("quiz_id", "1");
-//                jsonObjectSubmitQuiz.put("quiz_answers", jsonObjectAnswers);
-//            } catch (JSONException e){
-//                e.printStackTrace();
-//            }
-//            OkHttpClient okHttpClient = new OkHttpClient();
-////            String adminInfo = Credentials.basic("alireza","<!--comment>");
-//            RequestBody requestBody = RequestBody.create(jsonMediaType, jsonObjectSubmitQuiz.toString());
-//            Request requestPostSubmit = new Request.Builder().url("http://138.201.6.240:8000/api/submit-quiz/").method("POST", requestBody).addHeader("Authorization","Token "+token).build();
-//            Response response = null;
             for (int i = 0 ; i < questionsId.size() ; i++){
                 Log.d("questions_id_submit", questionsId.get(i));
                 Log.d("answers_id_submit", answersId.get(i));
@@ -132,8 +122,20 @@ public class JsonSubmitQuiz extends AsyncTask {
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
         try {
+            String[] answersStringArray = new String[answersId.size()];
+            for (int i = 0 ; i < answersId.size() ; i++){
+                int temp = Integer.valueOf(answersId.get(i)) - ((Integer.valueOf(questionsId.get(i))-1)*4);
+                answersStringArray[i] = String.valueOf(temp);
+            }
+            String[] trueAnswersArray = new String[answersId.size()];
+            for (int i = 0 ; i < answersId.size() ; i++){
+                int temp = Integer.valueOf(trueAnswers.get(i)) - ((Integer.valueOf(questionsId.get(i))-1)*4);
+                trueAnswersArray[i] = String.valueOf(temp);
+            }
             Intent intentToShowScore = new Intent(context, ShowQuizResultActivity.class);
             intentToShowScore.putExtra("score", score);
+            intentToShowScore.putExtra("answersArray", answersStringArray);
+            intentToShowScore.putExtra("trueAnswersArray", trueAnswersArray);
             context.startActivity(intentToShowScore);
         } catch (Exception e){
             e.printStackTrace();

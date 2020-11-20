@@ -34,7 +34,7 @@ public class JsonVideosDownload extends AsyncTask {
     Context context = null;
     int httpCode = 0;
     String videoTitle = "";
-    String fileName = "";
+    String fileName = "Alineo";
     Response responseVideoDownload = null;
     File fileVideoDownload = null;
     File root;
@@ -76,9 +76,13 @@ public class JsonVideosDownload extends AsyncTask {
                 fileOutputStream.write(responseVideoDownload.body().bytes());
                 fileOutputStream.close();
                 responseVideoDownload.body().close();
+                File newName = new File("Alineo");
                 File[] listOne = fileVideoDownload.listFiles();
                 for (int i = 0 ; i < listOne.length ; i++){
-                    Log.d("listOne", listOne[i].getAbsolutePath());
+                    Log.d("listOne55555555555555", listOne[i].getAbsolutePath());
+                    Log.d("listOneName", listOne[i].getName());
+                    listOne[i].renameTo(newName);
+                    Log.d("listOneNameNew", listOne[i].getName());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

@@ -140,7 +140,10 @@ public class JsonPostLogin extends AsyncTask {
             } else {
                 if (httpCode.equals("404")){
                     Toast.makeText(activity, "کاربر پیدا نشد!", Toast.LENGTH_LONG).show();
-                } else {
+                } else if (httpCode.equals("400")){
+                    Toast.makeText(activity, "رمز عبور اشتباه است!", Toast.LENGTH_LONG).show();
+                }
+                else {
                     Toast.makeText(activity, "لطفا ایمیل خود را تایید کنید!", Toast.LENGTH_LONG).show();
                     lblLoginStatus.setTextColor(Color.RED);
                     lblLoginStatus.setText("لطفا ایمیل خود را تایید کنید!");

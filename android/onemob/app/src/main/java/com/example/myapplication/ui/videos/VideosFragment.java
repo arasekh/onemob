@@ -56,25 +56,28 @@ public class VideosFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_videos, container, false);
         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},111);
 
-        videoListView = (ListView) root.findViewById(R.id.videosListView);
-
-        String path = "/storage/emulated/0/OneMob";
-        File file = new File(path);
-        if (!file.exists()){
-            file.mkdirs();
-            Log.d("FILE EXISTS", file.getAbsolutePath());
-        }
-
         try {
-            token = UtilToken.token;
-            Log.d("tokenFromArg", token);
-        } catch (NullPointerException e){
+            videoListView = (ListView) root.findViewById(R.id.videosListView);
+
+//        String path = "/storage/emulated/0/OneMob";
+//        File file = new File(path);
+//        if (!file.exists()){
+//            file.mkdirs();
+//            Log.d("FILE EXISTS", file.getAbsolutePath());
+//        }
+
+            try {
+                token = UtilToken.token;
+                Log.d("tokenFromArg", token);
+            } catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+//            JsonVideosDownload jsonVideosDownload = (JsonVideosDownload) new JsonVideosDownload(token).execute();
+            JsonVideoList jsonVideoList = (JsonVideoList) new JsonVideoList(token, getContext(), getActivity(), videoListView).execute();
+        } catch (Exception e){
             e.printStackTrace();
         }
-
-        JsonVideosDownload jsonVideosDownload = (JsonVideosDownload) new JsonVideosDownload(token).execute();
-        JsonVideoList jsonVideoList = (JsonVideoList) new JsonVideoList(token, getContext(), getActivity(), videoListView).execute();
-
         return root;
     }
 

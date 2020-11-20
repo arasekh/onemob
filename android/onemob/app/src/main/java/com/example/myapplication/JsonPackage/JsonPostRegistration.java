@@ -100,6 +100,17 @@ public class JsonPostRegistration extends AsyncTask {
                 httpCode = String.valueOf(response.code());
                 if (httpCode.equals("200")){
                     token = jsonObjectResult.getString("token");
+                } else if (httpCode.equals("400")){
+                    try {
+                        username = jsonObjectResult.getString("username");
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    try {
+                        email = jsonObjectResult.getString("email");
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 code = response.code();
             } catch (IOException e) {
@@ -110,6 +121,8 @@ public class JsonPostRegistration extends AsyncTask {
             Log.d("token",token);
             Log.d("code", String.valueOf(code));
             Log.d("Result Registration!", result);
+            Log.d("username Registration!", username);
+            Log.d("email Registration!", email);
         } catch (Exception e){
             e.printStackTrace();
             Log.e("Whole Exception!", e.getMessage());
@@ -129,6 +142,18 @@ public class JsonPostRegistration extends AsyncTask {
                 Log.d("UtilToken", token);
                 Intent intentToVerification = new Intent(context, VerificationActivity.class);
                 context.startActivity(intentToVerification);
+            } else if (httpCode.equals("400")){
+                if (username.equals("[\"A user with that username already exists.\"]") && email.equals("[\"Enter a valid email address.\"]")){
+                    Toast.makeText(context, "نام کاربری از قبل وجود دارد و ایمیل وارد شده معتبر نمی باشد!", Toast.LENGTH_LONG).show();
+                } else if (username.equals("[\"A user with that username already exists.\"]") && email.equals("[\"student with this email address already exists.\"]")){
+                    Toast.makeText(context, "نام کاربری و ایمیل از قبل وجود دارند!", Toast.LENGTH_LONG).show();
+                } else if (email.equals("[\"student with this email address already exists.\"]")){
+                    Toast.makeText(context, "ایمیل از قبل وجود دارد!", Toast.LENGTH_LONG).show();
+                } else if (email.equals("[\"Enter a valid email address.\"]")){
+                    Toast.makeText(context, "ایمیل وارد شده معتبر نمی باشد!", Toast.LENGTH_LONG).show();
+                } else if (username.equals("[\"A user with that username already exists.\"]")){
+                    Toast.makeText(context, "نام کاربری از قبل وجود دارد!", Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(context,"ثبت نام موفقیت آمیز نبود!", Toast.LENGTH_LONG).show();
                 lblRegistrationStatus.setTextColor(Color.RED);

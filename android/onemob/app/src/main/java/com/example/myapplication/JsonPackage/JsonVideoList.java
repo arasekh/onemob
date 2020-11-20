@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.ShowVideoActivity;
+import com.example.myapplication.UtilContentLengths;
 import com.example.myapplication.Video;
 import com.example.myapplication.VideoListAdapter;
 import com.example.myapplication.ui.videos.VideosFragment;
@@ -124,7 +125,12 @@ public class JsonVideoList extends AsyncTask {
         try {
             int fileCount = videosName.length;
             Log.d("fileCount", String.valueOf(fileCount));
-            ArrayList<Video> videosList = genVideos(fileCount, videosName);
+            if (UtilContentLengths.contentLengths.size() < fileCount){
+                for (int i = UtilContentLengths.contentLengths.size() ; i < fileCount ; i++){
+                    UtilContentLengths.contentLengths.add(i, "");
+                }
+            }
+            ArrayList<Video> videosList = genVideos(fileCount, videosTitle);
             VideoListAdapter adapter = new VideoListAdapter(activity, R.layout.videos_view_layout, videosList);
             videosListView.setAdapter(adapter);
             videosListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -134,6 +140,9 @@ public class JsonVideoList extends AsyncTask {
                     Intent toShowVideo = new Intent(context, ShowVideoActivity.class);
                     toShowVideo.putExtra("tokenShowVideo", token);
                     toShowVideo.putExtra("VideoTitleList", videosTitle[position]);
+                    toShowVideo.putExtra("videosTitle", videosTitle);
+                    toShowVideo.putExtra("videosName", videosName);
+                    toShowVideo.putExtra("position", position);
                     context.startActivity(toShowVideo);
                 }
             });

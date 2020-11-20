@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.myapplication.LoginActivity;
 import com.example.myapplication.MainActivity;
+import com.example.myapplication.UtilResendEmail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,8 @@ public class JsonConfirmEmail extends AsyncTask {
     EditText editTextConfirmEmailNotification;
     TextView lblConfirmStatus;
     Context context;
+
+    boolean stillResendingEmail;
 
     public JsonConfirmEmail(String token, String confirmEmailCode, EditText editTextConfirmEmailNotification, TextView lblConfirmStatus, Context context) {
         this.tokenConfirmEmail = token;
@@ -71,7 +74,7 @@ public class JsonConfirmEmail extends AsyncTask {
                 result = response.body().string();
                 jsonObjectResponse = new JSONObject(result);
                 confirmEmailStatus = jsonObjectResponse.getString("response");
-            } catch (IOException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 tokenConfirmEmail = "0";
                 confirmEmailStatus = "0";
@@ -96,6 +99,7 @@ public class JsonConfirmEmail extends AsyncTask {
             if (confirmEmailStatus.equals("successfully verified the email")){
                 lblConfirmStatus.setTextColor(Color.parseColor("#000000"));
                 lblConfirmStatus.setText("تایید ایمیل موفقیت آمیز بود!");
+                UtilResendEmail.stillResendingEmail = false;
                 Intent intentToMain = new Intent(context, MainActivity.class);
                 context.startActivity(intentToMain);
             } else {
