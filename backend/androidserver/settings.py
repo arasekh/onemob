@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from .email_info import *
+import environ
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'hj!y00*#(9l_67cg$&-%bre620##xqtb3)+s=l)%%whqf4zd=x'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [env('ALLOWED_HOSTS')]
 
 
 # Application definition
@@ -89,11 +97,14 @@ WSGI_APPLICATION = 'androidserver.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+	'ENGINE': 'django.db.backends.postgresql_psycopg2',
+	'NAME': env('DATABASE_NAME'),
+	'USER': env('DATABASE_USER'),
+	'PASSWORD': env('DATABASE_PASSWORD'),
+	'HOST': '127.0.0.1',
+	'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -135,8 +146,8 @@ STATIC_URL = '/static/'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(BASE_DIR) + '/media/'
 
-DEFF_SALT = 'salt'
-DEFF_PASSWORD = 'pass'
+DEFF_SALT = env('DEFF_SALT')
+DEFF_PASSWORD = env('DEFF_PASS')
 DEFF_FETCH_URL_NAME = 'api:video_fetch_url'
 
 #django cors-headers
@@ -163,11 +174,11 @@ PARENT_HOST = 'localhost:8000'
 
 #if not DEBUG:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = EMAIL_USE_TLS
-EMAIL_HOST = EMAIL_HOST
-EMAIL_HOST_USER = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
-EMAIL_PORT = EMAIL_PORT
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = env.int('EMAIL_PORT')
 #else:
 #    EMAIL_BACKEND = (
 #        'django.core.mail.backends.console.EmailBackend'
