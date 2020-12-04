@@ -55,6 +55,7 @@ def convert_video_to_hls(arg):
 
 
 class Video(models.Model):
+    number = models.IntegerField(unique=True)
     title = models.CharField(max_length=50, unique=True)
     video_file = EncryptedFileField(upload_to='videos/')
 
