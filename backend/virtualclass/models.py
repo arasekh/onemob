@@ -10,7 +10,6 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from django.db.models.signals import post_save
-from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .storages import getLocalVideoStorage, getRemoteVideoStorage
@@ -23,6 +22,8 @@ import os
 from django_encrypted_filefield.fields import EncryptedFileField
 import ffmpeg
 from django.utils import timezone
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 
 
 def select_storage():
@@ -205,3 +206,8 @@ class QuizInfo(models.Model):
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
 #     if created:
 #         Token.objects.create(user=instance)
+
+@receiver(post_delete, sender=Video)
+def delete_video_file(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    instance.video_file.delete(False)
