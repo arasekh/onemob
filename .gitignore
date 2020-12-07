@@ -6,12 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-### dajngo migrations ###
-### comment if you are in production ###
-androidserver/migrations/*
-virtualclass/migrations/*
-virtualclass/api/migrations/*
-
 
 ### vscode ###
 .vscode/*
