@@ -97,7 +97,7 @@ target/
 .env
 
 # virtualenv
-venv/
+backend/venv/
 ENV/
 
 # Sublime Text Files

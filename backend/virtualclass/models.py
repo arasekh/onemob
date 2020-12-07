@@ -1,23 +1,16 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-# commnt this to avoid errors concerning AUTH_USER_MODEL
+# comment this to avoid errors concerning AUTH_USER_MODEL
 # from django.contrib.auth import forms
-from django.utils import timezone
 from email_utils import send_email
-from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from django.conf import settings
-from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from .storages import getLocalVideoStorage, getRemoteVideoStorage
 from django.conf import settings
 import ffmpeg_streaming
 from ffmpeg_streaming import Formats
-from threading import Thread
-from time import sleep
 import os
 from django_encrypted_filefield.fields import EncryptedFileField
 import ffmpeg
@@ -27,7 +20,7 @@ from django.dispatch.dispatcher import receiver
 
 
 def select_storage():
-    return getLocalVideoStorage() if settings.DEBUG else MyRemoteStorage()
+    return getLocalVideoStorage() if settings.DEBUG else getRemoteVideoStorage()
 
 
 def compress_video_file(input_file_name):
@@ -72,11 +65,12 @@ class Video(models.Model):
     def __str__(self):
         return self.title
 
+
 class Quiz(models.Model):
-	# author = models.ForeignKey(Student, on_delete=models.DO_NOTHING, default=None)
+    # author = models.ForeignKey(Student, on_delete=models.DO_NOTHING, default=None)
     title = models.CharField(max_length=255, default='')
-	# created_at = models.DateTimeField(auto_now_add=True)
-	# times_taken = models.IntegerField(default=0, editable=False)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # times_taken = models.IntegerField(default=0, editable=False)
 
     @property
     def question_count(self):
@@ -84,13 +78,14 @@ class Quiz(models.Model):
 
     def get_questions(self):
         return self.questions.all()
-	
+
     class Meta:
         verbose_name_plural = "Quizzes"
         ordering = ['id']
 
     def __str__(self):
         return self.title
+
 
 class Question(models.Model):
     quiz = models.ForeignKey(
@@ -109,6 +104,7 @@ class Question(models.Model):
 
     def __str__(self):
         return self.prompt
+
 
 class Answer(models.Model):
     question = models.ForeignKey(
@@ -155,7 +151,7 @@ class Student(AbstractUser):
     )
 
     class Meta:
-        verbose_name_plural = _("Student")
+        verbose_name = _("Student")
         verbose_name_plural = _("Students")
 
     def __str__(self):
@@ -198,6 +194,7 @@ class Student(AbstractUser):
         self.email = self.normalize_email(self.email)
         super(Student, self).save(*args, **kwargs)
 
+
 class QuizInfo(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='students')
@@ -207,6 +204,7 @@ class QuizInfo(models.Model):
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
 #     if created:
 #         Token.objects.create(user=instance)
+
 
 @receiver(post_delete, sender=Video)
 def delete_video_file(sender, instance, **kwargs):
