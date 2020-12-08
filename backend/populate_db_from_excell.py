@@ -18,6 +18,8 @@ def read_all():
         vid = Video.objects.create(number=number, title=title)
         vid.video_file.save(vid.title, f)
         vid.save()
+        f.close()
+        response.close()
 
 
 def get_download_link(drive_link):
