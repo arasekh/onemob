@@ -242,9 +242,10 @@ class ListAllAvailableVideosApiView(ObtainAuthToken):
         # extend the student token because he/she is active
         extend_token_after_login(student)
         student_videos = student.videos.all()
-        all_videos = Video.objects.all()
-        videos = [{'title': video.title, 'name': video.filename, 'price': video.price,
-                   'purchased': video in student_videos} for video in all_videos]
+        all_videos = Video.objects.all().order_by('number')
+        videos = [{'number': video.number, 'title': video.title, 'name': video.filename,
+                   'price': video.price, 'purchased': video in student_videos}
+                  for video in all_videos]
         return Response({
             'response': 'successfully got the videos',
             'username': student.username,
