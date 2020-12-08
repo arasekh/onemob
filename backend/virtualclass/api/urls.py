@@ -7,15 +7,15 @@ FETCH_URL_NAME = FETCH_URL_NAME[FETCH_URL_NAME.find(':')+1:] # delete namespace 
 app_name = 'virtualclass'
 
 urlpatterns = [
-    path('create/', views.RegisterationApiView.as_view(), name='signup'),
+    path('create/', views.RegistrationApiView.as_view(), name='signup'),
     path('verify-email/', views.EmailVerification.as_view(), name="verify-email"),
     path('resend-email/', views.EmailResend.as_view(), name="resend-email"),
     path('login/', views.LoginApiView.as_view(), name='login'),
     path(r'video/<str:title>/', views.DownloadVideoApiView.as_view(), name='download_video'),
-    path('videos/', views.ListVideosApiView.as_view(), name='list_videos'),
+    path('videos/', views.ListAllAvailableVideosApiView.as_view(), name='list_videos'),
     path('quizzes/', views.ListQuizzesApiView.as_view(), name='list_quizzes'),
-    path('get-quiz/<str:title>/', views.getQuizApiView.as_view(), name='get_quiz'),
-    path('submit-quiz/', views.submitQuizApiView.as_view(), name='submit_quiz'),
+    path('get-quiz/<str:title>/', views.GetQuizApiView.as_view(), name='get_quiz'),
+    path('submit-quiz/', views.SubmitQuizApiView.as_view(), name='submit_quiz'),
     re_path(
         r'^fetch/(?P<path>.+)/$',  # up to you, but path is required
         views.FetchVideoView.as_view(),          # your view, your permissions

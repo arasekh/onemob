@@ -31,6 +31,7 @@ import json
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
 EMAIL_SENT_TIMEOUT = getattr(settings, 'EMAIL_SENT_TIMEOUT', 1)
 
+
 def create_token(student):
     token, created =  Token.objects.get_or_create(user=student)
     utc_now = timezone.now()
@@ -43,6 +44,7 @@ def create_token(student):
         token.created = timezone.now()
         token.save()
     return token
+
 
 # important Note: This method is called only after login and with a valid token
 # so when this method is called, the callee must have had a valid token   
@@ -57,7 +59,8 @@ def extend_token_after_login(student):
     token.save()
     return token
 
-def raiseErrorIfTimeoutPassedOrVerified(student):
+
+def raise_error_if_timeout_passed_or_verified(student):
     utc_now = timezone.now()
     tolerance = 5 # this is because of delay
     timeout = EMAIL_SENT_TIMEOUT - tolerance
@@ -67,7 +70,8 @@ def raiseErrorIfTimeoutPassedOrVerified(student):
     if student.email_valid:
         raise ValidationError({'detail' : 'Your email is already verified!'})
 
-def raiseErrorIfTokenExpired(student):
+
+def raise_error_if_token_expired(student):
     utc_now = timezone.now()
     tolerance = 5 # this is because of delay
     timeout = EMAIL_SENT_TIMEOUT + tolerance
@@ -77,11 +81,13 @@ def raiseErrorIfTokenExpired(student):
     if student.email_valid:
         raise ValidationError({'detail' : 'Your email is already verified!'})
 
+
 class CustomAuthToken(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = StudentListSerializer
+
     def post(self, request, *args, **kwargs):
         student = request.auth.user
         return Response({
@@ -91,20 +97,24 @@ class CustomAuthToken(ObtainAuthToken):
             'last_name': student.last_name,
         })
 
+
 class StudentListApiView(generics.ListAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentListSerializer
+
 
 class StudentDetailApiView(generics.RetrieveAPIView):
     queryset = Student.objects.all()
     serializer_class = StudentDetailSerializer
     lookup_field = 'username'
 
-class RegisterationApiView(generics.CreateAPIView):
+
+class RegistrationApiView(generics.CreateAPIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = RegisterationSerializer
+
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
@@ -119,12 +129,14 @@ class RegisterationApiView(generics.CreateAPIView):
             'email': student.email,
         })
 
+
 class LoginApiView(APIView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Student.objects.all()
     serializer_class = StudentDetailSerializer
     lookup_field = 'username'
+
     def post(self, request, *args, **kwargs):
         username = request.data['username']
         student = get_object_or_404(Student, username=username)
@@ -138,6 +150,7 @@ class LoginApiView(APIView):
             'token': token.key,
             'email_valid': student.email_valid,
         })
+
 
 class FetchVideoView(FetchView):
     def get(self, request, *args, **kwargs):
@@ -168,9 +181,11 @@ class FetchVideoView(FetchView):
         return HttpResponse(
             content, content_type=magic.Magic(mime=True).from_buffer(content))
 
+
 class DownloadVideoApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         title = kwargs.get("title")
         video = get_object_or_404(Video, title=title)
@@ -199,9 +214,11 @@ class DownloadVideoApiView(ObtainAuthToken):
         else:
             raise PermissionDenied()
 
+
 class ListVideosApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         student = request.auth.user
         # extend the student token because he/she is active
@@ -215,9 +232,30 @@ class ListVideosApiView(ObtainAuthToken):
             'videos': videos,
         })
 
+
+class ListAllAvailableVideosApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        student = request.auth.user
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
+        student_videos = student.videos.all()
+        all_videos = Video.objects.all()
+        videos = [{'title': video.title, 'name': video.filename, 'price': video.price,
+                   'purchased': video in student_videos} for video in all_videos]
+        return Response({
+            'response': 'successfully got the videos',
+            'username': student.username,
+            'videos': videos,
+        })
+
+
 class ListQuizzesApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         student = request.auth.user
         # extend the student token because he/she is active
@@ -231,9 +269,11 @@ class ListQuizzesApiView(ObtainAuthToken):
             'quiz_titles': quiz_titles,
         })
 
-class getQuizApiView(ObtainAuthToken):
+
+class GetQuizApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         title = kwargs.get("title")
         quiz = get_object_or_404(Quiz, title=title)
@@ -261,7 +301,8 @@ class getQuizApiView(ObtainAuthToken):
         else:
             raise PermissionDenied()
 
-class submitQuizApiView(ObtainAuthToken):
+
+class SubmitQuizApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
@@ -303,7 +344,8 @@ class submitQuizApiView(ObtainAuthToken):
             })
         else:
             raise PermissionDenied()
-    
+
+
 class EmailVerification(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -311,7 +353,7 @@ class EmailVerification(ObtainAuthToken):
         student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
-        raiseErrorIfTokenExpired(student)
+        raise_error_if_token_expired(student)
         if request.data['verification_key'] != student.verification_key:
             raise ValidationError({'detail': 'verification_key provided is incorrect'})
         student.email_valid = True
@@ -321,7 +363,8 @@ class EmailVerification(ObtainAuthToken):
             'username': student.username,
             'email': student.email,
         })
-    
+
+
 class EmailResend(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -329,7 +372,7 @@ class EmailResend(ObtainAuthToken):
         student = request.auth.user
         # extend the student token because he/she is active
         extend_token_after_login(student)
-        raiseErrorIfTimeoutPassedOrVerified(student)
+        raise_error_if_timeout_passed_or_verified(student)
         # change the verification token for security reasons
         student.update_verification_token()
         student.send_verification_email()
@@ -338,6 +381,7 @@ class EmailResend(ObtainAuthToken):
             'username': student.username,
             'email': student.email,
         })
+
 
 class StudentLoginView(APIView):
     queryset = Student.objects.all()

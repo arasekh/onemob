@@ -51,6 +51,7 @@ class Video(models.Model):
     number = models.IntegerField(unique=True)
     title = models.CharField(max_length=50, unique=True)
     video_file = EncryptedFileField(upload_to='videos/')
+    price = models.DecimalField(max_digits=19, decimal_places=4)
 
     @property
     def filename(self):
