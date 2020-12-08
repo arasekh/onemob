@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+# django server logs
+stderr.txt
+stdout.txt
+
 
 ### vscode ###
 .vscode/*
