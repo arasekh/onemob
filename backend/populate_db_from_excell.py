@@ -15,8 +15,8 @@ def read_all():
         download_url = get_download_link(drive_link)
         response = requests.get(download_url)
         f = ContentFile(response.content)
-        vid = Video.objects.create(number=number, title=title)
-        vid.video_file.save(vid.title, f)
+        vid = Video.objects.create(number=number, title=title, price=10)
+        vid.video_file.save(vid.title + '.m4v', f)
         vid.save()
 
 
