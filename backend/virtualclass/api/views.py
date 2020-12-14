@@ -290,7 +290,8 @@ class GetQuizApiView(ObtainAuthToken):
                 question = {'id': question_query.id, 'text': question_query.prompt}
                 answers = []
                 for answer_query in question_query.get_answers():
-                    answers += [{'id': answer_query.id, 'text': answer_query.text, 'correct': answer_query.correct}]
+                    answers += [{'id': answer_query.id, 'text': answer_query.text,
+                                 'correct': answer_query.correct}]
                 quiz += [{'question': question, 'answers': answers}]
             return Response({
                 'response': 'successfully got the quiz',
@@ -306,6 +307,7 @@ class GetQuizApiView(ObtainAuthToken):
 class SubmitQuizApiView(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         student = request.auth.user
         # extend the student token because he/she is active
@@ -350,6 +352,7 @@ class SubmitQuizApiView(ObtainAuthToken):
 class EmailVerification(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         student = request.auth.user
         # extend the student token because he/she is active
@@ -369,6 +372,7 @@ class EmailVerification(ObtainAuthToken):
 class EmailResend(ObtainAuthToken):
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         student = request.auth.user
         # extend the student token because he/she is active
@@ -384,10 +388,49 @@ class EmailResend(ObtainAuthToken):
         })
 
 
+class BuyVideoApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        title = kwargs.get("title")
+        video = get_object_or_404(Video, title=title)
+        student = request.auth.user
+        # extend the student token because he/she is active
+        extend_token_after_login(student)
+        student_videos = student.videos.all()
+        if video in student_videos:
+            raise ValidationError({"detail": "You have already bought this video!"})
+        elif video.price > student.balance:
+            raise ValidationError({"detail": "You do not have enough money to buy this video!"})
+        else:
+            student.balance -= video.price
+            student.videos.add(video.pk)
+            student.save()
+            return Response({
+                'response': 'successfully bought the video',
+                'username': student.username,
+            })
+
+
+class GetBalanceApiView(ObtainAuthToken):
+    authentication_classes = [ExpiringTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        student = request.auth.user
+        return Response({
+            'response': 'successfully got the balance',
+            'username': student.username,
+            'balance': student.balance,
+        })
+
+
 class StudentLoginView(APIView):
     queryset = Student.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         content = {
             'user': unicode(request.user),  # `django.contrib.auth.User` instance.

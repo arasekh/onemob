@@ -132,8 +132,10 @@ class Student(AbstractUser):
     email_sent_time = models.DateTimeField(blank=True, null=True)
     videos = models.ManyToManyField(Video, blank=True)
     quizzes = models.ManyToManyField(Quiz, blank=True, related_name='quizzes')
-    quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True, related_name='quiz_info')
-
+    quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True,
+                                       related_name='quiz_info')
+    balance = models.DecimalField(max_digits=19, decimal_places=4, blank=False, null=False,
+                                  default=0, editable=False)
 
     def generate_token():
         """
