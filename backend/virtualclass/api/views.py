@@ -410,6 +410,7 @@ class BuyVideoApiView(ObtainAuthToken):
             return Response({
                 'response': 'successfully bought the video',
                 'username': student.username,
+                'balance': student.balance,
             })
 
 

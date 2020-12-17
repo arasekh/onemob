@@ -135,7 +135,7 @@ class Student(AbstractUser):
     quiz_info = models.ManyToManyField(Quiz, through='QuizInfo', blank=True,
                                        related_name='quiz_info')
     balance = models.DecimalField(max_digits=19, decimal_places=4, blank=False, null=False,
-                                  default=0, editable=False)
+                                  default=1000, editable=False)
 
     def generate_token():
         """
