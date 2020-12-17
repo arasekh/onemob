@@ -143,12 +143,13 @@ class LoginApiView(APIView):
         password1 = student.password
         password2 = request.data['password']
         if password1 != password2:
-            raise ValidationError({'detail' : "Wrong Password"})
+            raise ValidationError({'detail': "Wrong Password"})
         token = create_token(student)
         return Response({
             'email': student.email,
             'token': token.key,
             'email_valid': student.email_valid,
+            'balance': student.balance,
         })
 
 
