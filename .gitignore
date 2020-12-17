@@ -9,7 +9,7 @@ __pycache__/
 # django server logs
 stderr.txt
 stdout.txt
-
+eye.xlsx
 
 ### vscode ###
 .vscode/*
