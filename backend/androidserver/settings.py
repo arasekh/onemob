@@ -12,13 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import environ
+import os
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
+WSGI_APPLICATION = 'onemob.wsgi.application'
+
+env = environ.Env()
 # reading .env file
-environ.Env.read_env()
+environ.Env.read_env(DEBUG=(bool, False))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = [env('ALLOWED_HOSTS'), 'localhost']
 
@@ -152,6 +152,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = "/media/"
 MEDIA_ROOT = str(BASE_DIR) + '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 DEFF_SALT = env('DEFF_SALT')
 DEFF_PASSWORD = env('DEFF_PASS')
