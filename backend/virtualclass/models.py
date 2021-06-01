@@ -5,8 +5,6 @@ from django.utils.translation import gettext_lazy as _
 # from django.contrib.auth import forms
 from email_utils import send_email
 from django.utils.crypto import get_random_string
-from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 from .storages import getLocalVideoStorage, getRemoteVideoStorage
 from django.conf import settings
 import ffmpeg_streaming
@@ -90,7 +88,7 @@ class Quiz(models.Model):
 
 class Question(models.Model):
     quiz = models.ForeignKey(
-        Quiz, 
+        Quiz,
         related_name='questions',
         on_delete=models.DO_NOTHING
     )
@@ -109,8 +107,8 @@ class Question(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(
-        Question, 
-        related_name='answers', 
+        Question,
+        related_name='answers',
         on_delete=models.DO_NOTHING
     )
     text = models.CharField(max_length=255)
@@ -120,7 +118,7 @@ class Answer(models.Model):
         verbose_name_plural = "Answers"
 
     def __str__(self):
-        return self.text    
+        return self.text
 
 
 class Student(AbstractUser):

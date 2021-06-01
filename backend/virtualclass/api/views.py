@@ -1,39 +1,33 @@
 from rest_framework import generics
-from virtualclass.models import Student, Video, Quiz, QuizInfo, Question, Answer
-from .serializers import (StudentListSerializer, StudentDetailSerializer, RegisterationSerializer, 
-                            EmailVerificationSerializer, StudentVideosSerializer)
+from virtualclass.models import Student, Video, Quiz, Question, Answer
+from .serializers import (StudentListSerializer, StudentDetailSerializer,
+                          RegisterationSerializer)
 from django.shortcuts import get_object_or_404
 from virtualclass.authentication import ExpiringTokenAuthentication
 from rest_framework.authentication import TokenAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework.authtoken.views import ObtainAuthToken
-from django.shortcuts import get_object_or_404
 from django.conf import settings
-from django.http import HttpResponse, Http404, HttpResponseForbidden
+from django.http import HttpResponse, Http404
 import os
-from django.contrib.auth.mixins import AccessMixin
 from django_encrypted_filefield.views import FetchView
-from django.urls import reverse, NoReverseMatch
-from django_encrypted_filefield.constants import FETCH_URL_NAME
 from django_encrypted_filefield.crypt import Cryptographer
-from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
 import magic
 from django.utils import timezone
-import pytz
-from django.core import serializers
 import json
+import requests
 
 EXPIRE_HOURS = getattr(settings, 'REST_FRAMEWORK_TOKEN_EXPIRE_HOURS', 1)
 EMAIL_SENT_TIMEOUT = getattr(settings, 'EMAIL_SENT_TIMEOUT', 1)
 
 
 def create_token(student):
-    token, created =  Token.objects.get_or_create(user=student)
+    token, created = Token.objects.get_or_create(user=student)
     utc_now = timezone.now()
     if not created:
         # delete previously created token if it is expired
@@ -47,9 +41,9 @@ def create_token(student):
 
 
 # important Note: This method is called only after login and with a valid token
-# so when this method is called, the callee must have had a valid token   
+# so when this method is called, the callee must have had a valid token
 def extend_token_after_login(student):
-    token, created =  Token.objects.get_or_create(user=student)
+    token, created = Token.objects.get_or_create(user=student)
     utc_now = timezone.now()
     if created or token.created < utc_now - timezone.timedelta(hours=EXPIRE_HOURS):
         # You are in an invalid state because you don't even have a token or your token is expired
@@ -62,24 +56,27 @@ def extend_token_after_login(student):
 
 def raise_error_if_timeout_passed_or_verified(student):
     utc_now = timezone.now()
-    tolerance = 5 # this is because of delay
+    tolerance = 5  # this is because of delay
     timeout = EMAIL_SENT_TIMEOUT - tolerance
     if student.email_sent_time > utc_now - timezone.timedelta(seconds=timeout):
         # You are in an invalid state because you can't receive an email while your timeout has not reached!
-        raise ValidationError({'detail' : 'Sorry, We cannot send you an email within less than a minute!'})
+        raise ValidationError({'detail': 'Sorry, We cannot send you an email within less' +
+                               'than a minute!'})
     if student.email_valid:
-        raise ValidationError({'detail' : 'Your email is already verified!'})
+        raise ValidationError({'detail': 'Your email is already verified!'})
 
 
 def raise_error_if_token_expired(student):
     utc_now = timezone.now()
-    tolerance = 5 # this is because of delay
+    tolerance = 5  # this is because of delay
     timeout = EMAIL_SENT_TIMEOUT + tolerance
-    if utc_now - student.email_sent_time >=  timezone.timedelta(seconds=timeout):
-        # You are in an invalid state because you can't receive an email while your timeout has not reached!
-        raise ValidationError({'detail' : 'Email verification Token is expired. Please Ask us to send you a new one!'})
+    if utc_now - student.email_sent_time >= timezone.timedelta(seconds=timeout):
+        # You are in an invalid state because you can't receive an email while your timeout
+        # has not reached!
+        raise ValidationError({'detail': 'Email verification Token is expired. Please Ask us' +
+                               'to send you a new one!'})
     if student.email_valid:
-        raise ValidationError({'detail' : 'Your email is already verified!'})
+        raise ValidationError({'detail': 'Your email is already verified!'})
 
 
 class CustomAuthToken(ObtainAuthToken):
@@ -328,7 +325,7 @@ class SubmitQuizApiView(ObtainAuthToken):
                     question = Question.objects.get(id=question_id)
                     if question not in quiz_questions:
                         raise Exception()
-                except:
+                except Exception:
                     raise ValidationError({'detail': 'question ids provided are incorrect'})
                 quiz_answers = question.get_answers()
                 try:
@@ -336,11 +333,11 @@ class SubmitQuizApiView(ObtainAuthToken):
                     answer = Answer.objects.get(id=answer_id)
                     if answer not in quiz_answers:
                         raise Exception()
-                except:
+                except Exception:
                     raise ValidationError({'detail': 'answer ids provided are incorrect'})
                 if answer.correct:
                     score += 1
-            quizInfo = QuizInfo.objects.create(quiz=quiz, student=student, score=score)
+            # quizInfo = QuizInfo.objects.create(quiz=quiz, student=student, score=score)
             return Response({
                 'response': 'successfully submitted the quiz',
                 'username': student.username,

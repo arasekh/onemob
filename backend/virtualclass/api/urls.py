@@ -1,9 +1,8 @@
 from django.urls import path, re_path
 from . import views
-from rest_framework.authtoken import views as authviews
 from django_encrypted_filefield.constants import FETCH_URL_NAME
 
-FETCH_URL_NAME = FETCH_URL_NAME[FETCH_URL_NAME.find(':')+1:] # delete namespace from url
+FETCH_URL_NAME = FETCH_URL_NAME[FETCH_URL_NAME.find(':')+1:]  # delete namespace from url
 app_name = 'virtualclass'
 
 urlpatterns = [
