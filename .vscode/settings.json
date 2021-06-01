@@ -1,0 +1,18 @@
+{
+  "cornflakes.linter.executablePath": "/home/alireza/PycharmProjects/onemob/backend/venv/bin/flake8",
+  "cornflakes.linter.run": "onType",
+  "files.associations": {
+    "**/templates/*.html": "django-html",
+    "**/templates/*": "django-txt",
+    "**/requirements{/**,*}.{txt,in}": "pip-requirements",
+    "*.html": "html"
+  },
+  "emmet.includeLanguages": {
+      "django-html": "html"
+  },
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.banditEnabled": false,
+  "python.linting.mypyEnabled": false
+}
