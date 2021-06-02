@@ -16,7 +16,7 @@ class ExpiringTokenAuthentication(TokenAuthentication):
 
     # important Note: This method is called only after login and with a valid token
     # so when this method is called, the callee must have had a valid token
-    def _extend_token(student):
+    def _extend_token(self, student):
         token, created = Token.objects.get_or_create(user=student)
         utc_now = timezone.now()
         if created or token.created < utc_now - timezone.timedelta(hours=EXPIRE_HOURS):

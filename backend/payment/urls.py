@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import HomeView
+from .views import paymentCreate, paymentReturn
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
+    path('create/', paymentCreate.as_view(), name='create'),
+    path('return/', paymentReturn.as_view(), name='return'),
 ]
