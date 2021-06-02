@@ -15,6 +15,7 @@ import ffmpeg
 from django.utils import timezone
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
+from django.utils import timezone
 
 
 def select_storage():
@@ -200,6 +201,46 @@ class QuizInfo(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='students')
     score = models.IntegerField()
+
+
+class Transaction(models.Model):
+    # id created by the receiver of the transaction
+    # order_id = models.CharField(max_length=50, verbose_name=_('order id'))
+
+    # Unique id returned by the payment gateway for this transaction
+    payment_id = models.TextField(unique=True, null=True, blank=True,
+                                  verbose_name=_('payment id'))
+    payment_link = models.TextField(verbose_name=_('payment link'))
+    idpay_track_id = models.IntegerField(unique=True, null=True, blank=True)
+    bank_track_id = models.TextField(unique=True, null=True, blank=True)
+    amount = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True,
+                                 verbose_name=_('amount'))
+    # card_number = models.TextField(default="****", verbose_name=_('card number'))
+    hashed_card_number = models.TextField(null=True, blank=True,
+                                          verbose_name=_('hashed card number'))
+    date = models.DateTimeField(default=timezone.now)
+
+    class TransactionStatus(models.IntegerChoices):
+        # Refer to https://idpay.ir/web-service/v1.1/#ad39f18522 for more details about
+        # status codes!
+        incomplete = 1
+        unsuccessful = 2
+        error = 3
+        blocked = 4
+        payerRedirect = 5
+        systemRedirect = 6
+        cancelled = 7
+        gatewayRedirect = 8
+        verificationPending = 10
+        verified = 100
+        alreadyVerified = 101
+        received = 200
+
+    status = models.IntegerField(choices=TransactionStatus.choices,
+                                 default=TransactionStatus.incomplete)
+
+    def __str__(self):
+        return str(self.pk) + " " + self.get_status_display()
 
 # @receiver(post_save, sender='virtualclass.Student')
 # def create_auth_token(sender, instance=None, created=False, **kwargs):
