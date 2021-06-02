@@ -11,8 +11,6 @@ environ.Env.read_env(DEBUG=(bool, False))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-IDPAY_API_KEY = env('IDPAY_API_KEY')
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -41,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'nested_admin',
+    'payment',
 ]
 
 MIDDLEWARE = [
@@ -168,6 +167,9 @@ EMAIL_SENT_TIMEOUT = 60  # 60 seconds
 ROOT_HOSTCONF = 'androidserver.hosts'
 DEFAULT_HOST = 'index'
 PARENT_HOST = 'localhost:8000'
+IDPAY_API_KEY = env('IDPAY_API_KEY')
+IDPAY_SANDBOX = env.bool('IDPAY_SANDBOX')
+AUTH_HEADER_PREFIX = 'Token'
 
 # if not DEBUG:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
