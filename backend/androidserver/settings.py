@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'nested_admin',
     'payment',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -169,6 +170,7 @@ DEFAULT_HOST = 'index'
 PARENT_HOST = 'localhost:8000'
 IDPAY_API_KEY = env('IDPAY_API_KEY')
 IDPAY_SANDBOX = env.bool('IDPAY_SANDBOX')
+BASE_URL = env('BASE_URL')
 AUTH_HEADER_PREFIX = 'Token'
 
 # if not DEBUG:
