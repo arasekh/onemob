@@ -214,7 +214,7 @@ class Transaction(models.Model):
     idpay_track_id = models.IntegerField(unique=True, null=True, blank=True)
     bank_track_id = models.TextField(unique=True, null=True, blank=True)
     amount = models.DecimalField(max_digits=19, decimal_places=2, verbose_name=_('amount'))
-    # card_number = models.TextField(default="****", verbose_name=_('card number'))
+    card_number = models.TextField(default="****", verbose_name=_('card number'))
     hashed_card_number = models.TextField(null=True, blank=True,
                                           verbose_name=_('hashed card number'))
     date = models.DateTimeField(default=timezone.now)
