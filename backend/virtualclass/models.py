@@ -15,7 +15,6 @@ import ffmpeg
 from django.utils import timezone
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
-from django.utils import timezone
 
 
 def select_storage():
@@ -207,6 +206,7 @@ class Transaction(models.Model):
     # id created by the receiver of the transaction
     # order_id = models.CharField(max_length=50, verbose_name=_('order id'))
 
+    user = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, related_name='user')
     # Unique id returned by the payment gateway for this transaction
     payment_id = models.TextField(unique=True, null=True, blank=True,
                                   verbose_name=_('payment id'))

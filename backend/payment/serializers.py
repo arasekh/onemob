@@ -5,4 +5,5 @@ from virtualclass.models import Transaction
 class PaymentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ('amount', )
+        fields = ('amount', 'user')
+        read_only_fields = ('user', )

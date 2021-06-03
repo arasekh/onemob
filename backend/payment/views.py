@@ -29,7 +29,7 @@ class paymentCreate(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            transaction = serializer.save()
+            transaction = serializer.save(user=student)
             order_id = transaction.pk
 
             payer = {
