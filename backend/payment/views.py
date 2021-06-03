@@ -83,6 +83,7 @@ def _verify_transaction(request, paymentID, orderID, transaction):
         transaction.status = result['status']
         transaction.bank_track_id = result['payment']['track_id']
         transaction.save()
+        return 'پرداخت با موفقیت انجام شد.'
     # Transaction not verified.
     return result['message']
 
