@@ -20,7 +20,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = [env('ALLOWED_HOSTS'), 'localhost']
+ALLOWED_HOSTS = [env('ALLOWED_HOSTS'), 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -89,7 +89,7 @@ if 'sqlite' in env('DATABASE'):
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
-	}
+    }
 else:
     DATABASES = {
         'default': {

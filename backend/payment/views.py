@@ -7,6 +7,11 @@ from rest_framework.views import APIView
 from django.urls import reverse
 from .serializers import PaymentCreateSerializer
 from rest_framework import status
+from virtualclass.models import Transaction
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
+import pytz
 
 
 def payment_init():
@@ -16,7 +21,7 @@ def payment_init():
     return IDPayAPI(api_key, base_url, sandbox)
 
 
-class paymentCreate(APIView):
+class CreatePayment(APIView):
     serializer_class = PaymentCreateSerializer
     authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -44,9 +49,8 @@ class paymentCreate(APIView):
             result = idpay_payment.payment(str(order_id), float(transaction.amount),
                                            IDPAY_CALLBACK, payer)
 
-            # import pdb; pdb.set_trace()
             if 'id' in result:
-                transaction.status = 1
+                transaction.status = Transaction.TransactionStatus.incomplete
                 transaction.payment_id = result['id']
                 transaction.payment_link = result['link']
                 transaction.save()
@@ -64,5 +68,82 @@ class paymentCreate(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class paymentReturn(APIView):
-    pass
+def _update_balance(transaction):
+    user = transaction.user
+    user.balance += transaction.amount
+    user.save()
+
+
+def _verify_transaction(request, paymentID, orderID, transaction):
+    idpay_payment = payment_init()
+    result = idpay_payment.verify(paymentID, orderID)
+    if 'status' in result:
+        # Transaction verified successfully.
+        _update_balance(transaction)
+        transaction.status = result['status']
+        transaction.bank_track_id = result['payment']['track_id']
+        transaction.save()
+    # Transaction not verified.
+    return result['message']
+
+
+def _get_transaction_status(status):
+    states = {
+        1: 'پرداخت انجام نشده است.',
+        2: 'پرداخت ناموفق بوده است.',
+        3: 'خطایی رخ داده است',
+        4: 'پرداخت بلوکه شده است.',
+        5: 'برگشت به پرداخت کننده',
+        6: 'برگشت خورده سیستمی',
+        7: 'انصراف از پرداخت',
+        8: 'به درگاه پرداخت منتقل شده است.',
+        10: 'در انتظار تایید پرداخت',
+        100: 'پرداخت تایید شده است.',
+        101: 'پرداخت قبلا تایید شده است.',
+        200: 'به دریافت کننده واریز شد.',
+    }
+    if states[int(status)]:
+        return states[int(status)]
+    return False
+
+
+@csrf_exempt
+def payment_return(request):
+    if request.method == 'POST':
+        paymentID = request.POST.get('id')
+        status = request.POST.get('status')
+        idpayTrackID = request.POST.get('track_id')
+        orderID = request.POST.get('order_id')
+        amount = request.POST.get('amount')
+        cardNumber = request.POST.get('card_no')
+        hashedCardNumber = request.POST.get('hashed_card_no')
+        date = request.POST.get('date')
+
+        queryset = Transaction.objects.filter(pk=int(orderID), payment_id=paymentID,
+                                              amount=amount)
+        if queryset.count() == 1:
+            transaction = queryset[0]
+            if transaction.status == Transaction.TransactionStatus.incomplete:
+                transaction.status = status
+                transaction.date = datetime.fromtimestamp(int(date)/1000, tz=pytz.timezone(
+                    settings.TIME_ZONE))
+                transaction.card_number = cardNumber
+                transaction.hashed_card_number = hashedCardNumber
+                transaction.idpay_track_id = idpayTrackID
+                transaction.save()
+                if int(status) == Transaction.TransactionStatus.verificationPending.value:
+                    txt = _verify_transaction(request, paymentID, orderID, transaction)
+                else:
+                    # Show a proper message according to the response status.
+                    txt = _get_transaction_status(status)
+            elif transaction.status == Transaction.TransactionStatus.verificationPending:
+                # An error has occured during last transaction verification. Try again.
+                txt = _verify_transaction(request, paymentID, orderID, transaction)
+            else:
+                # Double spending
+                txt = "متاسفم. این سفارش قبلا ثبت شده است. لطفا یک سفارش جدید ایجاد کنید."
+        else:
+            txt = "سفارش موردنظر شما یافت نشد!"  # Order Not Found
+    else:
+        txt = "فکر میکنم راهتون رو گم کردین!"  # Bad Request
+    return render(request, 'payment/idpay.html', {'txt': txt})

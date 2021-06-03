@@ -1,0 +1,68 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="IDPay">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <title> IDPay </title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="https://idpay.ir">IDPay</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+
+    <br/> <br/> <br/> <br/>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <div style="width: 100%;" class="alert alert-primary text-center" role="alert" >
+              {{txt}}
+          </div>
+        </div>
+        <div class="col-2"></div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <button style="width: 100%;" class="btn btn-primary" onclick="redirectToApplication()">بازگشت به برنامه</button>
+        </div>
+        <div class="col-2"></div>
+      </div>
+    </div>
+
+    <!-- jQuery first, then Popper.js with Bootstrap.js or a bundle containing both -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'payment/js/redirect.js' %}"></script>
+
+    <script>
+      function redirectToApplication(){
+        var qs = AppRedirect.queryString;
+        AppRedirect.redirect({
+            android: {
+                'host': 'post/?message=' + encodeURIComponent(qs['message']), // Host/path/querystring part in a custom scheme URL
+                // 'action': '', // Equivalent to ACTION in INTENTs
+                // 'category': '', // Equivalent to CATEGORY in INTENTs
+                // 'component': '', // Equivalent to COMPONENT in INTENTs
+                'scheme': 'twitter', // Scheme part in a custom scheme URL
+                'package': 'com.twitter.android', // Package name in Play store
+                'fallback': 'https://play.google.com/store/apps/details?id=com.twitter.android&hl=en&message=' + qs['message']
+            }
+        });
+      }
+    </script>
+  </body>
+</html>
