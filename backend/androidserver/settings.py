@@ -172,6 +172,7 @@ IDPAY_API_KEY = env('IDPAY_API_KEY')
 IDPAY_SANDBOX = env.bool('IDPAY_SANDBOX')
 BASE_URL = env('BASE_URL')
 AUTH_HEADER_PREFIX = 'Token'
+VIDEO_FILES_UPLOAD_TO = 'videos/'
 
 # if not DEBUG:
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

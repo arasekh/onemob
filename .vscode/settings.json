@@ -14,5 +14,6 @@
   "python.linting.flake8Enabled": true,
   "python.linting.enabled": true,
   "python.linting.banditEnabled": false,
-  "python.linting.mypyEnabled": false
+  "python.linting.mypyEnabled": false,
+  "python.pythonPath": "f:\\onemob\\venv\\Scripts\\python.exe"
 }

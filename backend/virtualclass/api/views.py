@@ -171,8 +171,8 @@ class DownloadVideoApiView(ObtainAuthToken):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        title = kwargs.get("title")
-        video = get_object_or_404(Video, title=title)
+        name = kwargs.get("name")
+        video = get_object_or_404(Video, video_file=settings.VIDEO_FILES_UPLOAD_TO + name)
         student = request.auth.user
         student_videos = student.videos.all()
         if video in student_videos:
